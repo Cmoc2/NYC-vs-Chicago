@@ -59,7 +59,8 @@ d3.json("ChicagoData.json", function(error, json) {
         tooltip.html("Community Area: "+ d.id+"<br/>"
                     +"Population: "+d.properties.population+"<br/>"+
                      "Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"+
-                     "Income Per Capita: "+d.properties.incomePerCapita);
+                     "Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
+                    +"Crime: "+d.properties.crimePerK);
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
@@ -125,7 +126,10 @@ d3.json("NYData.json", function(error, json) {
         //if showing general information:
         if(!DetailedTooltip) {
             tooltip.html("Borough: "+d.properties.boro_name+"<br/>"+ "Community District: "+ d.id+"<br/>"
-                    +"Population: "+d.properties.population);
+                    +"Population: "+d.properties.population+"<br/>"
+                    +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
+                    +"Income per Capita: "+d.properties.income+"<br/>"
+                    +"Crime: "+d.properties.crimePerK);
         } else //else show details on topic.
             tooltip.html("Detailed Info");
         return tooltip.style("display","inline");
