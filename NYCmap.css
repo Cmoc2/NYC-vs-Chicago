@@ -1,3 +1,7 @@
+body{
+    background: #e6e6e6;
+}
+
 .Cfeatures{
     fill: cyan;
     stroke: #777;
@@ -53,7 +57,7 @@ div.tooltip {
 	-moz-box-shadow: 0px 0px 0px 2px #756bb1;
 	-webkit-box-shadow: 0px 0px 0px 2px #756bb1;
 	box-shadow: 0px 0px 0px 2px #756bb1;
-	background-color:#9e9ac8;
+	background-color:#e88585;
 	-moz-border-radius:10px;
 	-webkit-border-radius:10px;
 	border-radius:10px;
@@ -69,7 +73,7 @@ div.tooltip {
 }
 
 .CrimeButton:hover {
-  background: #54278f;
+  background: #8f2727;
   text-decoration: none;
 }
 
