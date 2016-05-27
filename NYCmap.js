@@ -1,5 +1,5 @@
 //Set the SVG Element
-var width = 768,
+var width = 600,
     height = 600;//800x600
 
 //SVG for Chicago
