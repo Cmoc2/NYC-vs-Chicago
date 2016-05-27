@@ -1,19 +1,19 @@
 body{
-    background: #e6e6e6;
+    background: #F7F7EB;
 }
 
 .Cfeatures{
-    fill: cyan;
+    fill: #B3DDF2;
     stroke: #777;
     stroke-linejoin: round;
-    stroke-width: 2;
+    stroke-width: 1.5;
 }
 
 .NYfeatures{
     fill: #4e4ac4;
     stroke: #777;
     stroke-linejoin: round;
-    stroke-width: 2;
+    stroke-width: 1.5;
 }
 
 div.tooltip {	
@@ -98,5 +98,29 @@ div.tooltip {
 
 .LifeButton:hover {
   background: rgb(0,109,44);
+  text-decoration: none;
+}
+
+.IncomeButton {
+	-moz-box-shadow: 0px 0px 0px 2px rgb(49,163,84);
+	-webkit-box-shadow: 0px 0px 0px 2px rgb(49,163,84);
+	box-shadow: 0px 0px 0px 2px rgb(80,70,154);
+	background-color:rgb(135,83,224);
+	-moz-border-radius:10px;
+	-webkit-border-radius:10px;
+	border-radius:10px;
+	border:1px solid #302D36;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:arial;
+	font-size:19px;
+	padding:7px 19px;
+	text-decoration:none;
+	text-shadow:0px 1px 0px #283966;
+}
+
+.IncomeButton:hover {
+  background: rgb(80,41,148);
   text-decoration: none;
 }
