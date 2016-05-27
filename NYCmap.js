@@ -81,9 +81,9 @@ d3.json("NYData.json", function(error, json) {
         } else
         //if showing general information:
         if(!DetailedTooltip) {
-            tooltip.html("<center>"+d.properties.boro_name+" District "
+            tooltip.html("<center><b>"+d.properties.boro_name+" District "
                         + bDistrict()
-                        +"</center><br/>"
+                        +"</b></center><br/>"
                         +"Population: "+d.properties.population+"<br/>"
                         +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
                         +"Income per Capita: "+d.properties.income+"<br/>"
@@ -165,12 +165,14 @@ d3.json("ChicagoData.json", function(error, json) {
         .duration(200)
         .style("opacity", .9);
         //change what's inside the tooltip
-        tooltip.html("<center>"+d.properties.comName+"</center><br/>"
+        if(!DetailedTooltip){
+        tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
                     +"Population: "+d.properties.population+"<br/>"
                     +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
                     +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
                     +"Crime: "+d.properties.crimePerK+"<br/>"
                     );
+        } else tooltip.html("Detailed Info");
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
