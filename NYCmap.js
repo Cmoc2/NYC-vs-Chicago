@@ -19,7 +19,7 @@ var income = colorbrewer.Greens[6];
 var crime = colorbrewer.Reds[8];
 
 //add for legend scale text reference
-var popText = [40000, 80000, 120000, 160000, 200000, 220000];
+var popText = ["40000+", 80000, 120000, 160000, 200000, 220000];
 var lifeText = [60, 70, 80, 90, 100];
 var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
@@ -46,89 +46,6 @@ var svg = d3.select("body")
 
 //Should a detailed tooltip be shown?
 var DetailedTooltip=false;
-
-var poplegend = svg.selectAll(".legend")
-            .data(pop_colors.domain(), function(d) { return d; })
-            .enter()
-            .append("g")
-            .attr("class", "poplegend");
-
-//the appending of the legend by color
-    poplegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-45)
-        .attr("width", 150)
-        .attr("height", 15)
-        .attr("fill", function(d, i){ return pop[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px")
-        .style("opacity",1);
-
-    poplegend.append("text")
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-15)
-        .attr("width", 200)
-        .attr("height", 15)
-        .style("fill", "black")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .style("font-size", 10)
-        .text(function(d, i) { return popText[i];});
-
-var crimelegend = svg.selectAll(".legend")
-            .data(crime_colors.domain(), function(d) { return d; })
-            .enter()
-            .append("g")
-            .attr("class", "crimelegend");
-
-//the appending of the legend by color
- crimelegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-60)
-        .attr("width", 200)
-        .attr("height", 30)
-        .attr("fill", function(d, i){ return crime[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px")
-        .style("opacity",0);
-
-var lifelegend = svg.selectAll(".legend")
-            .data(life_colors.domain(), function(d) { return d; })
-            .enter()
-            .append("g")
-            .attr("class", "lifelegend");
-
-//the appending of the legend by color
- lifelegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-60)
-        .attr("width", 200)
-        .attr("height", 40)
-        .attr("fill", function(d, i){ return life[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px")
-        .style("opacity",0);
-
-var incomelegend = svg.selectAll(".legend")
-            .data(income_colors.domain(), function(d) { return d; })
-            .enter()
-            .append("g")
-            .attr("class", "incomelegend");
-
-//the appending of the legend by color
- incomelegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-60)
-        .attr("width", 200)
-        .attr("height", 30)
-        .attr("fill", function(d, i){ return income[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px")
-        .style("opacity",0);
 
 //To make NY data Global
 var NYdatum;
@@ -160,90 +77,95 @@ d3.json("NYData.json", function(error, json) {
     var districtNum;
     //color the Areas
     svg.selectAll(".features")
-    .data(topojson.feature(json, json.objects.features).features)
-  .enter().append("path")
-    .attr("class", "NYfeatures")
-    .attr("d", path)
-    .on("mouseover", function(d){
-        //fit the tooltip to the information shown
-        tooltip.style("height","95px").style("width","175px");
-        tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-        //change the details inside the tooltip
-        //NY-remove the hundreth digit from the Districts.
-        function bDistrict(){
-            var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500],DistrictNum;
-            switch(d.properties.boro_name){
-                case ManString[0]:
-                    DistrictNum=d.properties.boro_cd-ManString[1];
-                    break;
-                case BronxString[0]:
-                    DistrictNum=d.properties.boro_cd-BronxString[1];
-                    break;
-                case BrookString[0]:
-                    DistrictNum=d.properties.boro_cd-BrookString[1];
-                    break;
-                case qString[0]:
-                    DistrictNum=d.properties.boro_cd-qString[1];
-                    break;
-                case StateString[0]:
-                    DistrictNum=d.properties.boro_cd-StateString[1];
-                    break;
-                default:
-                    DistrictNum="bearsNstuff";
+        .data(topojson.feature(json, json.objects.features).features)
+        .enter().append("path")
+        .attr("class", "NYfeatures")
+        .attr("d", path)
+        .on("mouseover", function(d){
+            //fit the tooltip to the information shown
+            tooltip.style("height","95px").style("width","175px");
+            tooltip.transition()
+            .duration(200)
+            .style("opacity", .9);
+            //change the details inside the tooltip
+            //NY-remove the hundreth digit from the Districts.
+            function bDistrict(){
+                var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
+                switch(d.properties.boro_name){
+                    case ManString[0]:
+                        districtNum=d.properties.boro_cd-ManString[1];
+                        break;
+                    case BronxString[0]:
+                        districtNum=d.properties.boro_cd-BronxString[1];
+                        break;
+                    case BrookString[0]:
+                        districtNum=d.properties.boro_cd-BrookString[1];
+                        break;
+                    case qString[0]:
+                        districtNum=d.properties.boro_cd-qString[1];
+                        break;
+                    case StateString[0]:
+                        districtNum=d.properties.boro_cd-StateString[1];
+                        break;
+                    default:
+                        districtNum="bearsNstuff";
+                }
             }
-            districtNum = DistrictNum;
-            return DistrictNum;
-        }
-        //skip the rest if theres no data to show
-        if(bDistrict()=="bearsNstuff"){
-            tooltip.style("height","15px").style("width","115px");
-            tooltip.html("Unpopulated Area");
-        } else
-        //if showing general information:
-        if(!DetailedTooltip) {
-            tooltip.html(
-                "<center><b>"+d.properties.boro_name+" District "
-                + bDistrict()
-                +"</b></center><br/>"
-                +"Population: "+d.properties.population+"<br/>"
-                +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                +"Income per Capita: "+d.properties.income+"<br/>"
-                +"Crime: "+d.properties.crimePerK);
-        } else //else show details on topic.
-            tooltip.html("Detailed Info");
-    
-        return tooltip.style("display","inline");
-    })
-    .on("click", function(d){
-        DetailedTooltip=!DetailedTooltip; //toggle.
-        if(!DetailedTooltip) {
-            tooltip.html(
-                "<center><b>"+d.properties.boro_name+" District "
-                + districtNum
-                +"</b></center><br/>"
-                +"Population: "+d.properties.population+"<br/>"
-                +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                +"Income per Capita: "+d.properties.income+"<br/>"
-                +"Crime: "+d.properties.crimePerK);
-        } else tooltip.html("Detailed Info");
-    })
-    .on("mousemove", function(d){
-        return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
-    })
-    .on("mouseout", function(d){
-        tooltip.transition()
-        .duration(500)
-        .style("opacity", 0);
-       //return tooltip.style("visibility","hidden");
-    })
-    //New York City Label
+            bDistrict();
+            //skip the rest if theres no data to show
+            if(districtNum=="bearsNstuff"){
+                tooltip.style("height","15px").style("width","115px");
+                tooltip.html("Unpopulated Area");
+            } else
+            //if showing general information:
+            if(!DetailedTooltip) {
+                tooltip.html(
+                    "<center><b>"+d.properties.boro_name+" District "
+                    + districtNum
+                    +"</b></center><br/>"
+                    +"Population: "+d.properties.population+"<br/>"
+                    +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
+                    +"Income per Capita: "+d.properties.income+"<br/>"
+                    +"Crime: "+d.properties.crimePerK);
+            } else //else show details on topic.
+                tooltip.html("Detailed Info");
+
+            return tooltip.style("display","inline");
+        })
+        .on("click", function(d){
+            if(districtNum=="bearsNstuff");else{
+                DetailedTooltip=!DetailedTooltip; //toggle.
+                if(!DetailedTooltip) {
+                    tooltip.html(
+                        "<center><b>"+d.properties.boro_name+" District "
+                        + districtNum
+                        +"</b></center><br/>"
+                        +"Population: "+d.properties.population+"<br/>"
+                        +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
+                        +"Income per Capita: "+d.properties.income+"<br/>"
+                        +"Crime: "+d.properties.crimePerK);
+                } else tooltip.html("Detailed Info");
+            }
+        })
+        .on("mousemove", function(d){
+            return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        })
+        .on("mouseout", function(d){
+            tooltip.transition()
+            .duration(500)
+            .style("opacity", 0);
+           //return tooltip.style("visibility","hidden");
+        })
+        //New York City Label
     svg.append("text")
     .attr("x",40)
     .attr("y",100)
     .attr("id","nyLabel")
-    .text("New York City");
+    .style("opacity",0)
+    .text("New York City")
+    .transition(2000)
+    .delay(500)
+    .style("opacity",1);
 });
 
 
@@ -332,7 +254,11 @@ d3.json("ChicagoData.json", function(error, json) {
     .attr("x",100)
     .attr("y",300)
     .attr("id","chicagoLabel")
-    .text("Chicago");
+    .style("opacity",0)
+    .text("Chicago")
+    .transition(2000)
+    .delay(500)
+    .style("opacity",1);
 });
 
 //Draw the buttons
@@ -345,99 +271,22 @@ document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime<
 function Population() {
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
-    
-    poplegend.transition(1000)
-        .style("opacity",1);
-    crimelegend.transition(1000)
-        .style("opacity",0);
-    incomelegend.transition(1000)
-        .style("opacity",0);
-    lifelegend.transition(1000)
-        .style("opacity",0);
+    ShowLegendPLIC(1,0,0,0);
 }
 function Life() {
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
-    
-    poplegend.style("opacity",0);
-    crimelegend.style("opacity",0);
-    incomelegend.style("opacity",0);
-    lifelegend.transition(1000)
-    .style("opacity",1);
-    lifelegend.append("rect")
-       .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-45)
-        .attr("width", 150)
-        .attr("height", 15)
-        .attr("fill", function(d, i){ return life[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px");
-    lifelegend.append("text")
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-15)
-        .attr("width", 150)
-        .attr("height", 15)
-        .style("fill", "rgba(65, 65, 65, 0.86)")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .style("font-size", 12.5)
-        .text(function(d, i) { return lifeText[i];});
+    ShowLegendPLIC(0,1,0,0);
 }
 function Income() {
     ColorScheme(NYdatum,svg,income_colors,"income");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
-    poplegend.transition(1000)
-        .style("opacity",0);
-    crimelegend.style("opacity",0);
-    incomelegend.transition(1000)
-    .style("opacity",1);
-    lifelegend.style("opacity",0);
-    incomelegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-45)
-        .attr("width", 150)
-        .attr("height", 15)
-        .attr("fill", function(d, i){ return income[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px");
-    incomelegend.append("text")
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-15)
-        .attr("width", 150)
-        .attr("height", 15)
-        .style("fill", "rgba(65, 65, 65, 0.86)")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .style("font-size", 11.5)
-        .text(function(d, i) { return incomeText[i];});
+    ShowLegendPLIC(0,0,1,0);
 }
 function Crime() {
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
-    ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");  
-    poplegend.style("opacity",0);
-    crimelegend.style("opacity",1);
-    incomelegend.style("opacity",0);
-    lifelegend.style("opacity",0);
-    crimelegend.append("rect")
-        //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-45)
-        .attr("width", 150)
-        .attr("height", 15)
-        .attr("fill", function(d, i){ return crime[i];})
-        .style("stroke", "rgba(105, 105, 105, 0.86)")
-        .style("stroke-width", "3px");
-    crimelegend.append("text")
-        .attr("x", function(d,i){ return 220 + (35 * i);})
-        .attr("y", height-15)
-        .attr("width", 150)
-        .attr("height", 15)
-        .style("fill", "rgba(65, 65, 65, 0.86)")
-        .style("font-weight", "bold")
-        .style("font-family", "sans-serif")
-        .style("font-size", 12.5)
-        .text(function(d, i) { return crimeText[i];});
+    ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
+    ShowLegendPLIC(0,0,0,1);
 }
 
 //Helper Functions
@@ -456,4 +305,57 @@ function ColorScheme(data,map,color,property){
       function(d) {
       if (d.properties[property]) return color(d.properties[property]);
       else return "grey"});  
+}
+
+AppendLegend(pop_colors,pop,popText,"poplegend",0);
+AppendLegend(life_colors,life,lifeText,"lifelegend",0);
+AppendLegend(income_colors,income,incomeText,"incomelegend",0);
+AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
+
+function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
+    svg.selectAll(".legend")
+        .data(cScale.domain(),function(d){return d;})
+        .enter()
+        .append("g")
+        .attr("class", cssClass)
+        .attr("opacity",opacity)
+        .append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (55 * i);})
+        .attr("y", height-40)
+        .attr("width", 55)
+        .attr("height", 15)
+        .attr("fill", function(d, i){ return brewSet[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "2px")
+        .style("opacity",1);
+    //further appending will append it inside rect. Starting again appending to g.
+    svg.selectAll("g."+cssClass)
+        .append("text")
+        .attr("class", cssClass)
+        .attr("x", function(d,i){ return 225 + (55 * i);})
+        .attr("y", height-15)
+        .attr("width", 200)
+        .attr("height", 15)
+        .style("opacity",opacity)
+        .style("fill", "black")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 10)
+        .text(function(d, i) { return (textArray[i]);});
+}
+
+function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
+    d3.selectAll(".poplegend")
+        .transition(1000)
+        .style("opacity",popOpac);
+    d3.selectAll(".lifelegend")
+        .transition(1000)
+        .style("opacity",lifeOpac);
+    d3.selectAll(".incomelegend")
+        .transition(1000)
+        .style("opacity",incomeOpac);
+    d3.selectAll(".crimelegend")
+        .transition(1000)
+        .style("opacity",crimeOpac);
 }
