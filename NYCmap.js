@@ -236,12 +236,20 @@ document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime<
 
 //functions
 function Population() {
+    ColorScheme(NYdatum,svg,pop_colors,"population");
+    ColorScheme(Cdatum,svg2,pop_colors,"population");  
 }
 function Life() {
+    ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
+    ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
 }
 function Income() {
+    ColorScheme(NYdatum,svg,income_colors,"income");
+    ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
 }
 function Crime() {
+    ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
+    ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");  
 }
 
 //Helper Functions
@@ -252,6 +260,7 @@ function minMax(toGet,d){
 }
 
 //draws colors for the buttons
+function ColorScheme(data,map,color,property){
     map.selectAll("path")
     .data(data.features)
     .transition().duration(1000)
