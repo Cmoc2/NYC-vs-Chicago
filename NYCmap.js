@@ -2,6 +2,15 @@
 var width = 600,
     height = 600;//600x600
 
+//define color scale
+var pop_colors = d3.scale.threshold().range(colorbrewer.Blues[7]);
+    pop_colors.domain([40000, 80000, 120000, 160000, 200000, 220000]);
+var life_colors = d3.scale.threshold().range(colorbrewer.Oranges[6]);
+    life_colors.domain([60, 70, 80, 90, 100]);
+var income_colors = d3.scale.threshold().range(colorbrewer.Greens[6]);
+    income_colors.domain([5000, 15000, 40000, 80000, 100000]);
+var crime_colors = d3.scale.threshold().range(colorbrewer.Reds[8]);
+    crime_colors.domain([0, 10, 20, 30, 40, 50, 60]);
 
 //an SVG for New York
 var svg = d3.select("body")
@@ -18,14 +27,24 @@ var svg = d3.select("body")
 	.style("z-index", "10")
     .style("opacity",0)
 	.style("display", "none");
+
 //Should a detailed tooltip be shown?
 var DetailedTooltip=false;
 
+//To make NY data Global
+var NYdatum;
+
 d3.json("NYData.json", function(error, json) {
     if (error) return console.error(error);
-    console.log(json.objects.features.geometries);
     
     var features = topojson.feature(json,json.objects.features);
+    
+    //copy to global variable
+    NYdatum = features;
+    
+    //data Ranges
+    var popRange=minMax("population", json);
+    
     var projection = d3.geo.mercator()
   					.center([-73.94, 40.70])
   					.scale(54000)
@@ -131,15 +150,18 @@ var svg2= d3.select("body")
 d3.json("ChicagoData.json", function(error, json) {
     if (error) return console.error(error);
    
-    //data Ranges: Population,LifeExpectancy,CrimePerK
-    var popRange=minMax("population");
-    var lifeRange=minMax("lifeExpectancy");
-    var crimeRange=minMax("crimePerThousand");
-   //Testing
-    console.log(json.objects.features.geometries);
-   //End Testing 
-    //location of geometries/properties
+    //data Ranges: Population,LifeExpectancy,CrimePerK,income
+    var popRange=minMax("population",json);//2916,98514
+    var lifeRange=minMax("lifeExpectancy",json);
+    var crimeRange=minMax("crimePerK",json);//0.27,51.33
+    var incomeRange=minMax("incomePerCapita",json);//8201,88669
+    
+     //location of geometries/properties
     var features = topojson.feature(json,json.objects.features);
+    
+    //copy features to global
+    Cdatum = features;
+    
     //allows view of the map (Otherwise it'll be drawn off-screen)
     var projection = d3.geo.albers()
                     .center([8.25, 41.88205])
@@ -204,16 +226,46 @@ d3.json("ChicagoData.json", function(error, json) {
     .attr("y",300)
     .attr("id","chicagoLabel")
     .text("Chicago");
-    //helper functions
-    //returns a [min,max] array of argument. Target is in json Properties.
-    function minMax(toGet){
-        data = json.objects.features.geometries;
-    return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
-}
 });
 
 //Draw the buttons
 document.write('<br><div align="left"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
-document.write('<button id="fifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
+document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
 document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><br/></div>');
+
+//functions
+function Population() {
+    ColorScheme(NYdatum,svg,pop_colors,"population");
+    ColorScheme(Cdatum,svg2,pop_colors,"population");  
+}
+function Life() {
+    ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
+    ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
+}
+function Income() {
+    ColorScheme(NYdatum,svg,income_colors,"income");
+    ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
+}
+function Crime() {
+    ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
+    ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");  
+}
+
+//Helper Functions
+//returns a [min,max] array of argument. Target is in json Properties.
+function minMax(toGet,d){
+        data = d.objects.features.geometries;
+    return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
+}
+
+//draws colors for the buttons
+function ColorScheme(data,map,color,property){
+    map.selectAll("path")
+    .data(data.features)
+    .transition().duration(1000)
+    .style("fill",
+      function(d) {
+      if (d.properties[property]) return color(d.properties[property]);
+      else return "grey"});  
+}
