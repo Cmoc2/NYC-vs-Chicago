@@ -12,6 +12,10 @@ var income_colors = d3.scale.threshold().range(colorbrewer.Greens[6]);
 var crime_colors = d3.scale.threshold().range(colorbrewer.Reds[8]);
     crime_colors.domain([0, 10, 20, 30, 40, 50, 60]);
 
+//Detailed Tooltip Selections
+var tipDetail = {population:1, lifeExpectancy:2,income:3,crime:4},
+    select;
+
 //an SVG for New York
 var svg = d3.select("body")
     .attr("align","center")
@@ -56,6 +60,9 @@ d3.json("NYData.json", function(error, json) {
         .datum(features)
         .attr("d", path);
     */
+    
+    //necessary to pass the District number to various .on()
+    var districtNum;
     //color the Areas
     svg.selectAll(".features")
     .data(topojson.feature(json, json.objects.features).features)
@@ -91,6 +98,7 @@ d3.json("NYData.json", function(error, json) {
                 default:
                     DistrictNum="bearsNstuff";
             }
+            districtNum = DistrictNum;
             return DistrictNum;
         }
         //skip the rest if theres no data to show
@@ -100,13 +108,14 @@ d3.json("NYData.json", function(error, json) {
         } else
         //if showing general information:
         if(!DetailedTooltip) {
-            tooltip.html("<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict()
-                        +"</b></center><br/>"
-                        +"Population: "+d.properties.population+"<br/>"
-                        +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                        +"Income per Capita: "+d.properties.income+"<br/>"
-                        +"Crime: "+d.properties.crimePerK);
+            tooltip.html(
+                "<center><b>"+d.properties.boro_name+" District "
+                + bDistrict()
+                +"</b></center><br/>"
+                +"Population: "+d.properties.population+"<br/>"
+                +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
+                +"Income per Capita: "+d.properties.income+"<br/>"
+                +"Crime: "+d.properties.crimePerK);
         } else //else show details on topic.
             tooltip.html("Detailed Info");
     
@@ -115,11 +124,14 @@ d3.json("NYData.json", function(error, json) {
     .on("click", function(d){
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
-            tooltip.html("Borough: "+d.properties.boro_name+"<br/>"+ "Community District: "+ d.id+"<br/>"
-                    +"Population: "+d.properties.population+"<br/>"
-                    +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                    +"Income per Capita: "+d.properties.income+"<br/>"
-                    +"Crime: "+d.properties.crimePerK);
+            tooltip.html(
+                "<center><b>"+d.properties.boro_name+" District "
+                + districtNum
+                +"</b></center><br/>"
+                +"Population: "+d.properties.population+"<br/>"
+                +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
+                +"Income per Capita: "+d.properties.income+"<br/>"
+                +"Crime: "+d.properties.crimePerK);
         } else tooltip.html("Detailed Info");
     })
     .on("mousemove", function(d){
@@ -202,7 +214,7 @@ d3.json("ChicagoData.json", function(error, json) {
     .on("click", function(d){
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
-            tooltip.html("<center>"+d.properties.comName+"</center><br/>"
+            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
                         +"Population: "+d.properties.population+"<br/>"
                         +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
                         +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
