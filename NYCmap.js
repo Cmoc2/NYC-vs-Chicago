@@ -3,14 +3,26 @@ var width = 600,
     height = 600;//600x600
 
 //define color scale
-var pop_colors = d3.scale.threshold().range(colorbrewer.Blues[7]);
-    pop_colors.domain([40000, 80000, 120000, 160000, 200000, 220000]);
-var life_colors = d3.scale.threshold().range(colorbrewer.Oranges[6]);
-    life_colors.domain([60, 70, 80, 90, 100]);
+var pop_colors = d3.scale.threshold().range(colorbrewer.Blues[7])
+    .domain([40000, 80000, 120000, 160000, 200000, 220000]);
+var life_colors = d3.scale.threshold().range(colorbrewer.Oranges[6])
+    .domain([60, 70, 80, 90, 100]);
 var income_colors = d3.scale.threshold().range(colorbrewer.Greens[6]);
     income_colors.domain([5000, 15000, 40000, 80000, 100000]);
-var crime_colors = d3.scale.threshold().range(colorbrewer.Reds[8]);
-    crime_colors.domain([0, 10, 20, 30, 40, 50, 60]);
+var crime_colors = d3.scale.threshold().range(colorbrewer.Reds[8])
+    .domain([0, 10, 20, 30, 40, 50, 60]);
+
+//add for legend scale color reference
+var pop = colorbrewer.Blues[7]; 
+var life = colorbrewer.Oranges[6];
+var income = colorbrewer.Greens[6];
+var crime = colorbrewer.Reds[8];
+
+//add for legend scale text reference
+var popText = [40000, 80000, 120000, 160000, 200000, 220000];
+var lifeText = [60, 70, 80, 90, 100];
+var incomeText = [5000, 15000, 40000, 80000, 100000];
+var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
 var tipDetail = {population:1, lifeExpectancy:2,income:3,crime:4},
@@ -34,6 +46,89 @@ var svg = d3.select("body")
 
 //Should a detailed tooltip be shown?
 var DetailedTooltip=false;
+
+var poplegend = svg.selectAll(".legend")
+            .data(pop_colors.domain(), function(d) { return d; })
+            .enter()
+            .append("g")
+            .attr("class", "poplegend");
+
+//the appending of the legend by color
+    poplegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-45)
+        .attr("width", 150)
+        .attr("height", 15)
+        .attr("fill", function(d, i){ return pop[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px")
+        .style("opacity",1);
+
+    poplegend.append("text")
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-15)
+        .attr("width", 200)
+        .attr("height", 15)
+        .style("fill", "black")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 10)
+        .text(function(d, i) { return popText[i];});
+
+var crimelegend = svg.selectAll(".legend")
+            .data(crime_colors.domain(), function(d) { return d; })
+            .enter()
+            .append("g")
+            .attr("class", "crimelegend");
+
+//the appending of the legend by color
+ crimelegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-60)
+        .attr("width", 200)
+        .attr("height", 30)
+        .attr("fill", function(d, i){ return crime[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px")
+        .style("opacity",0);
+
+var lifelegend = svg.selectAll(".legend")
+            .data(life_colors.domain(), function(d) { return d; })
+            .enter()
+            .append("g")
+            .attr("class", "lifelegend");
+
+//the appending of the legend by color
+ lifelegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-60)
+        .attr("width", 200)
+        .attr("height", 40)
+        .attr("fill", function(d, i){ return life[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px")
+        .style("opacity",0);
+
+var incomelegend = svg.selectAll(".legend")
+            .data(income_colors.domain(), function(d) { return d; })
+            .enter()
+            .append("g")
+            .attr("class", "incomelegend");
+
+//the appending of the legend by color
+ incomelegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-60)
+        .attr("width", 200)
+        .attr("height", 30)
+        .attr("fill", function(d, i){ return income[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px")
+        .style("opacity",0);
 
 //To make NY data Global
 var NYdatum;
@@ -250,18 +345,99 @@ document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime<
 function Population() {
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
+    
+    poplegend.transition(1000)
+        .style("opacity",1);
+    crimelegend.transition(1000)
+        .style("opacity",0);
+    incomelegend.transition(1000)
+        .style("opacity",0);
+    lifelegend.transition(1000)
+        .style("opacity",0);
 }
 function Life() {
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
+    
+    poplegend.style("opacity",0);
+    crimelegend.style("opacity",0);
+    incomelegend.style("opacity",0);
+    lifelegend.transition(1000)
+    .style("opacity",1);
+    lifelegend.append("rect")
+       .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-45)
+        .attr("width", 150)
+        .attr("height", 15)
+        .attr("fill", function(d, i){ return life[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px");
+    lifelegend.append("text")
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-15)
+        .attr("width", 150)
+        .attr("height", 15)
+        .style("fill", "rgba(65, 65, 65, 0.86)")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 12.5)
+        .text(function(d, i) { return lifeText[i];});
 }
 function Income() {
     ColorScheme(NYdatum,svg,income_colors,"income");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
+    poplegend.transition(1000)
+        .style("opacity",0);
+    crimelegend.style("opacity",0);
+    incomelegend.transition(1000)
+    .style("opacity",1);
+    lifelegend.style("opacity",0);
+    incomelegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-45)
+        .attr("width", 150)
+        .attr("height", 15)
+        .attr("fill", function(d, i){ return income[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px");
+    incomelegend.append("text")
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-15)
+        .attr("width", 150)
+        .attr("height", 15)
+        .style("fill", "rgba(65, 65, 65, 0.86)")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 11.5)
+        .text(function(d, i) { return incomeText[i];});
 }
 function Crime() {
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");  
+    poplegend.style("opacity",0);
+    crimelegend.style("opacity",1);
+    incomelegend.style("opacity",0);
+    lifelegend.style("opacity",0);
+    crimelegend.append("rect")
+        //sets the location and width of each colored rectangles and adds the iteratively
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-45)
+        .attr("width", 150)
+        .attr("height", 15)
+        .attr("fill", function(d, i){ return crime[i];})
+        .style("stroke", "rgba(105, 105, 105, 0.86)")
+        .style("stroke-width", "3px");
+    crimelegend.append("text")
+        .attr("x", function(d,i){ return 220 + (35 * i);})
+        .attr("y", height-15)
+        .attr("width", 150)
+        .attr("height", 15)
+        .style("fill", "rgba(65, 65, 65, 0.86)")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 12.5)
+        .text(function(d, i) { return crimeText[i];});
 }
 
 //Helper Functions
