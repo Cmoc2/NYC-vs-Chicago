@@ -54,7 +54,6 @@ d3.json("NYData.json", function(error, json) {
     if (error) return console.error(error);
     
     var features = topojson.feature(json,json.objects.features);
-    
     //copy to global variable
     NYdatum = features;
     
@@ -67,14 +66,7 @@ d3.json("NYData.json", function(error, json) {
   					.translate([(width) / 2, (height)/2]);
     
     var path = d3.geo.path().projection(projection);
-    /*What does this do?
-    svg.append("path")
-        .datum(features)
-        .attr("d", path);
-    */
-    
-    //necessary to pass the District number to various .on()
-    var districtNum;
+
     //color the Areas
     svg.selectAll(".features")
         .data(topojson.feature(json, json.objects.features).features)
@@ -88,32 +80,8 @@ d3.json("NYData.json", function(error, json) {
             .duration(200)
             .style("opacity", .9);
             //change the details inside the tooltip
-            //NY-remove the hundreth digit from the Districts.
-            function bDistrict(){
-                var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
-                switch(d.properties.boro_name){
-                    case ManString[0]:
-                        districtNum=d.properties.boro_cd-ManString[1];
-                        break;
-                    case BronxString[0]:
-                        districtNum=d.properties.boro_cd-BronxString[1];
-                        break;
-                    case BrookString[0]:
-                        districtNum=d.properties.boro_cd-BrookString[1];
-                        break;
-                    case qString[0]:
-                        districtNum=d.properties.boro_cd-qString[1];
-                        break;
-                    case StateString[0]:
-                        districtNum=d.properties.boro_cd-StateString[1];
-                        break;
-                    default:
-                        districtNum="bearsNstuff";
-                }
-            }
-            bDistrict();
             //skip the rest if theres no data to show
-            if(districtNum=="bearsNstuff"){
+            if(bDistrict(d)=="bearsNstuff"){
                 tooltip.style("height","15px").style("width","115px");
                 tooltip.html("Unpopulated Area");
             } else
@@ -121,30 +89,38 @@ d3.json("NYData.json", function(error, json) {
             if(!DetailedTooltip) {
                 tooltip.html(
                     "<center><b>"+d.properties.boro_name+" District "
-                    + districtNum
+                    + bDistrict(d)
                     +"</b></center><br/>"
                     +"Population: "+d.properties.population+"<br/>"
                     +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
                     +"Income per Capita: "+d.properties.income+"<br/>"
                     +"Crime: "+d.properties.crimePerK);
             } else //else show details on topic.
-                tooltip.html("Detailed Info");
+                tooltip.html(
+                        "<center><b>"+d.properties.boro_name+" District "
+                        + bDistrict(d)
+                        +"</b></center><br/>"
+                        +"Detailed Info");
 
             return tooltip.style("display","inline");
         })
         .on("click", function(d){
-            if(districtNum=="bearsNstuff");else{
+            if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
                     tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
-                        + districtNum
+                        + bDistrict(d)
                         +"</b></center><br/>"
                         +"Population: "+d.properties.population+"<br/>"
                         +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
                         +"Income per Capita: "+d.properties.income+"<br/>"
                         +"Crime: "+d.properties.crimePerK);
-                } else tooltip.html("Detailed Info");
+                } else tooltip.html(
+                        "<center><b>"+d.properties.boro_name+" District "
+                        + bDistrict(d)
+                        +"</b></center><br/>"
+                        +"Detailed Info");
             }
         })
         .on("mousemove", function(d){
@@ -166,6 +142,31 @@ d3.json("NYData.json", function(error, json) {
     .transition(2000)
     .delay(500)
     .style("opacity",1);
+    
+    //Helper functions (Only for NY)
+    //NY-remove the hundreth digit from the Districts.
+    function bDistrict(d){
+                var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
+                switch(d.properties.boro_name){
+                    case ManString[0]:
+                        return d.properties.boro_cd-ManString[1];
+                        break;
+                    case BronxString[0]:
+                        return d.properties.boro_cd-BronxString[1];
+                        break;
+                    case BrookString[0]:
+                        return d.properties.boro_cd-BrookString[1];
+                        break;
+                    case qString[0]:
+                        return d.properties.boro_cd-qString[1];
+                        break;
+                    case StateString[0]:
+                        return d.properties.boro_cd-StateString[1];
+                        break;
+                    default:
+                        return "bearsNstuff";
+                }
+            }
 });
 
 
@@ -199,11 +200,7 @@ d3.json("ChicagoData.json", function(error, json) {
                     .rotate([92.35, .5, -4])
                     .translate([width / 2, height / 2]);
     var path = d3.geo.path().projection(projection);
-    //what does this do?
-    /*svg2.append("path")
-        .datum(features)
-        .attr("d", path);
-    */
+    
     //color the Areas
     svg2.selectAll(".features")
     .data(topojson.feature(json, json.objects.features).features)
@@ -223,7 +220,9 @@ d3.json("ChicagoData.json", function(error, json) {
                     +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
                     +"Crime: "+d.properties.crimePerK+"<br/>"
                     );
-        } else tooltip.html("Detailed Info");
+        } else tooltip.html(
+                    "<center><b>"+d.properties.comName+"</b></center><br/>"
+                    +"Detailed Info");
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
@@ -237,7 +236,9 @@ d3.json("ChicagoData.json", function(error, json) {
                         +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
                         +"Crime: "+d.properties.crimePerK+"<br/>"
                         );
-        } else tooltip.html("Detailed Info");
+        } else tooltip.html(
+                    "<center><b>"+d.properties.comName+"</b></center><br/>"
+                    +"Detailed Info");
     })
     .on("mousemove", function(d){
         //update tooltip position
