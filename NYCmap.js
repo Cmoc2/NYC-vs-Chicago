@@ -220,7 +220,8 @@ d3.json("ChicagoData.json", function(error, json) {
         } else {
             d3.select(this).style("fill", "yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Detailed Info");
+                +"Below poverty: "+d.properties.percentbelowpoverty
+                +"%<br>16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>Detailed Info");
                }
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
@@ -234,7 +235,8 @@ d3.json("ChicagoData.json", function(error, json) {
         } else{
             d3.select(this).style("fill","yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Detailed Info");
+                    +"Percent Below Poverty: "+ d.properties.percentbelowpoverty)
+                    +"Detailed tooltip";
             }
     })
     .on("mousemove", function(d){
@@ -269,6 +271,7 @@ document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime<
 
 //button functions
 function Population() {
+    tooltip.style("background","rgba(176, 196, 222,0.94)");
     selectC=tipDetail.population;
     selectNY=tipDetail.population;
     select_colors=pop_colors;
@@ -277,6 +280,7 @@ function Population() {
     ShowLegendPLIC(1,0,0,0);
 }
 function Life() {
+    tooltip.style("background","rgba(248, 161, 41, 0.94)");
     selectC=tipDetail.lifeExpectancy;
     selectNY=tipDetail.lifeExpectancy;
     select_colors=life_colors;
@@ -285,6 +289,7 @@ function Life() {
     ShowLegendPLIC(0,1,0,0);
 }
 function Income() {
+    tooltip.style("background","rgba(114, 212, 141,0.94)");
     selectC=tipDetail.incomeC;
     selectNY=tipDetail.incomeNY;
     select_colors=income_colors;
@@ -293,6 +298,7 @@ function Income() {
     ShowLegendPLIC(0,0,1,0);
 }
 function Crime() {
+    tooltip.style("background","rgba(242, 145, 132,0.94)");
     selectC=tipDetail.crime;
     selectNY=tipDetail.crime;
     select_colors=crime_colors;
