@@ -27,8 +27,15 @@ var crimeText = [0, 10, 20, 30, 40, 50, 60];
 //Detailed Tooltip Selections
 var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"income",crime:"crimePerK"},selectC,selectNY;
 
+//an SVG to append both svg's
+var parentSVG= d3.select("body")
+    .append("svg")
+    .attr("id","parentSVG")
+    .attr("align","center")
+    .attr("width", width*2)
+    .attr("height", height);
 //an SVG for New York
-var svg = d3.select("body")
+var svg = d3.select("#parentSVG")
     .attr("align","center")
     .append("svg")
     .attr("width", width)
@@ -173,8 +180,9 @@ d3.json("NYData.json", function(error, json) {
 
 
 //SVG for Chicago
-var svg2= d3.select("body")
+var svg2= d3.select("#parentSVG")
     .append("svg")
+    .attr("x","600")
     .attr("width", width)
     .attr("height", height);
 
