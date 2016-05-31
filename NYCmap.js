@@ -29,6 +29,7 @@ var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",income
 
 //an SVG to append both svg's
 var parentSVG= d3.select("body")
+    .attr("align","center")
     .append("svg")
     .attr("id","parentSVG")
     .attr("align","center")
@@ -36,8 +37,8 @@ var parentSVG= d3.select("body")
     .attr("height", height);
 //an SVG for New York
 var svg = d3.select("#parentSVG")
-    .attr("align","center")
     .append("svg")
+    .attr("align","center")
     .attr("width", width)
     .attr("height", height);
 
@@ -64,12 +65,15 @@ d3.json("NYData.json", function(error, json) {
     NYdatum = features;
     
     //data Ranges
-    var popRange=minMax("population", json);
+    var popRange=minMax("population", json);//51673,247354
+    var lifeRange=minMax("lifeExpectancy", json);//74,85
+    var incomeRange=minMax("income", json);//11042,99858
+    var crimeRange=minMax("crimePerK",json);//3.75,98.63
     
     var projection = d3.geo.mercator()
   					.center([-73.94, 40.70])
   					.scale(54000)
-  					.translate([(width) / 2, (height)/2]);
+  					.translate([(width/2)+30, (height)/2]);
     
     var path = d3.geo.path().projection(projection);
 
@@ -131,7 +135,7 @@ d3.json("NYData.json", function(error, json) {
         })
         //New York City Label
     svg.append("text")
-    .attr("x",40)
+    .attr("x",70)
     .attr("y",100)
     .attr("id","nyLabel")
     .style("opacity",0)
@@ -182,7 +186,8 @@ d3.json("NYData.json", function(error, json) {
 //SVG for Chicago
 var svg2= d3.select("#parentSVG")
     .append("svg")
-    .attr("x","600")
+    .attr("align","center")
+    .attr("x",width)
     .attr("width", width)
     .attr("height", height);
 
@@ -272,10 +277,22 @@ d3.json("ChicagoData.json", function(error, json) {
 });
 
 //Draw the buttons
-document.write('<br><div align="left"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
+document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><br/></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
+
+//Slider
+var slider = document.getElementById('slider');
+noUiSlider.create(slider, {
+	start: [20, 80],
+    connect: true,
+    tooltips:[true,true],
+	range: {
+		'min': [ 0 ],
+		'max': [ 100 ]
+	}
+});
 
 //button functions
 function Population() {
@@ -339,7 +356,8 @@ AppendLegend(income_colors,income,incomeText,"incomelegend",0);
 AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
-    svg.selectAll(".legend")
+    var xPos=450;
+    parentSVG.selectAll(".legend")
         .data(cScale.domain(),function(d){return d;})
         .enter()
         .append("g")
@@ -347,8 +365,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .attr("opacity",opacity)
         .append("rect")
         //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (55 * i);})
-        .attr("y", height-40)
+        .attr("x", function(d,i){ return xPos + (55 * i);})
+        .attr("y", height-70)
         .attr("width", 55)
         .attr("height", 15)
         .attr("fill", function(d, i){ return brewSet[i];})
@@ -356,11 +374,11 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .style("stroke-width", "2px")
         .style("opacity",1);
     //further appending will append it inside rect. Starting again appending to g.
-    svg.selectAll("g."+cssClass)
+    parentSVG.selectAll("g."+cssClass)
         .append("text")
         .attr("class", cssClass)
-        .attr("x", function(d,i){ return 225 + (55 * i);})
-        .attr("y", height-15)
+        .attr("x", function(d,i){ return xPos+5+ (55 * i);})
+        .attr("y", height-45)
         .attr("width", 200)
         .attr("height", 15)
         .style("opacity",opacity)
