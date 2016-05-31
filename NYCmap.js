@@ -11,7 +11,7 @@ var income_colors = d3.scale.threshold().range(colorbrewer.Greens[6]);
     income_colors.domain([5000, 15000, 40000, 80000, 100000]);
 var crime_colors = d3.scale.threshold().range(colorbrewer.Reds[8])
     .domain([0, 10, 20, 30, 40, 50, 60]);
-
+var select_colors;
 //add for legend scale color reference
 var pop = colorbrewer.Blues[7]; 
 var life = colorbrewer.Oranges[6];
@@ -25,8 +25,7 @@ var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
-var tipDetail = {population:1, lifeExpectancy:2,income:3,crime:4},
-    select;
+var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"income",crime:"crimePerK"},selectC,selectNY;
 
 //an SVG for New York
 var svg = d3.select("body")
@@ -87,20 +86,14 @@ d3.json("NYData.json", function(error, json) {
             } else
             //if showing general information:
             if(!DetailedTooltip) {
-                tooltip.html(
-                    "<center><b>"+d.properties.boro_name+" District "
-                    + bDistrict(d)
-                    +"</b></center><br/>"
-                    +"Population: "+d.properties.population+"<br/>"
-                    +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                    +"Income per Capita: "+d.properties.income+"<br/>"
-                    +"Crime: "+d.properties.crimePerK);
-            } else //else show details on topic.
+                TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+            } else{d3.select(this).style("fill","yellow"); //else show details on topic.
                 tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
                         + bDistrict(d)
                         +"</b></center><br/>"
                         +"Detailed Info");
+            }
 
             return tooltip.style("display","inline");
         })
@@ -108,19 +101,15 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    tooltip.html(
-                        "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
-                        +"Population: "+d.properties.population+"<br/>"
-                        +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                        +"Income per Capita: "+d.properties.income+"<br/>"
-                        +"Crime: "+d.properties.crimePerK);
-                } else tooltip.html(
+                    HoverHighlight(this,selectNY);
+                    TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+                } else{ d3.select(this).style("fill","yellow");
+                       tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
                         + bDistrict(d)
                         +"</b></center><br/>"
                         +"Detailed Info");
+                }
             }
         })
         .on("mousemove", function(d){
@@ -130,6 +119,7 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
+            HoverHighlight(this,selectNY);
            //return tooltip.style("visibility","hidden");
         })
         //New York City Label
@@ -143,6 +133,7 @@ d3.json("NYData.json", function(error, json) {
     .delay(500)
     .style("opacity",1);
     
+    Population();
     //Helper functions (Only for NY)
     //NY-remove the hundreth digit from the Districts.
     function bDistrict(d){
@@ -167,6 +158,17 @@ d3.json("NYData.json", function(error, json) {
                         return "bearsNstuff";
                 }
             }
+    
+    function TooltipTextNY(d,name,pop,life,inc,crime){
+        tooltip.html(
+                        "<center><b>"+d.properties[name]+" District "
+                        + bDistrict(d)
+                        +"</b></center><br/>"
+                        +"Population: "+d.properties[pop]+"<br/>"
+                        +"Life Expectancy: "+d.properties[life]+"<br/>"
+                        +"Income per Capita: "+d.properties.income+"<br/>"
+                        +"Crime: "+d.properties[crime]);
+    }
 });
 
 
@@ -214,15 +216,12 @@ d3.json("ChicagoData.json", function(error, json) {
         .style("opacity", .9);
         //change what's inside the tooltip
         if(!DetailedTooltip){
-        tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Population: "+d.properties.population+"<br/>"
-                    +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                    +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
-                    +"Crime: "+d.properties.crimePerK+"<br/>"
-                    );
-        } else tooltip.html(
-                    "<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Detailed Info");
+        TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
+        } else {
+            d3.select(this).style("fill", "yellow");
+            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
+                +"Detailed Info");
+               }
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
@@ -230,21 +229,20 @@ d3.json("ChicagoData.json", function(error, json) {
     .on("click", function(d){
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
+            HoverHighlight(this,selectC);
+            TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
+        } else{
+            d3.select(this).style("fill","yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                        +"Population: "+d.properties.population+"<br/>"
-                        +"Life Expectancy: "+d.properties.lifeExpectancy+"<br/>"
-                        +"Income Per Capita: "+d.properties.incomePerCapita+"<br/>"
-                        +"Crime: "+d.properties.crimePerK+"<br/>"
-                        );
-        } else tooltip.html(
-                    "<center><b>"+d.properties.comName+"</b></center><br/>"
                     +"Detailed Info");
+            }
     })
     .on("mousemove", function(d){
         //update tooltip position
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
+        HoverHighlight(this,selectC);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -260,6 +258,7 @@ d3.json("ChicagoData.json", function(error, json) {
     .transition(2000)
     .delay(500)
     .style("opacity",1);
+    Population();
 });
 
 //Draw the buttons
@@ -268,29 +267,41 @@ document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();"
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
 document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><br/></div>');
 
-//functions
+//button functions
 function Population() {
+    selectC=tipDetail.population;
+    selectNY=tipDetail.population;
+    select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
     ShowLegendPLIC(1,0,0,0);
 }
 function Life() {
+    selectC=tipDetail.lifeExpectancy;
+    selectNY=tipDetail.lifeExpectancy;
+    select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
     ShowLegendPLIC(0,1,0,0);
 }
 function Income() {
+    selectC=tipDetail.incomeC;
+    selectNY=tipDetail.incomeNY;
+    select_colors=income_colors;
     ColorScheme(NYdatum,svg,income_colors,"income");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
 }
 function Crime() {
+    selectC=tipDetail.crime;
+    selectNY=tipDetail.crime;
+    select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
     ShowLegendPLIC(0,0,0,1);
 }
 
-//Helper Functions
+//-----Helper Functions------//
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
         data = d.objects.features.geometries;
@@ -305,7 +316,7 @@ function ColorScheme(data,map,color,property){
     .style("fill",
       function(d) {
       if (d.properties[property]) return color(d.properties[property]);
-      else return "grey"});  
+      else return "white"});  
 }
 
 AppendLegend(pop_colors,pop,popText,"poplegend",0);
@@ -359,4 +370,18 @@ function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
     d3.selectAll(".crimelegend")
         .transition(1000)
         .style("opacity",crimeOpac);
+}
+
+function TooltipTextC(d,name,pop,life,inc,crime){
+    tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
+                        +"Population: "+d.properties[pop]+"<br/>"
+                        +"Life Expectancy: "+d.properties[life]+"<br/>"
+                        +"Income Per Capita: "+d.properties[inc]+"<br/>"
+                        +"Crime: "+d.properties[crime]+"<br/>"
+                        );
+}
+
+function HoverHighlight(d,select){
+    d3.select(d).style("fill",function(d){
+            return select_colors(d.properties[select])});
 }
