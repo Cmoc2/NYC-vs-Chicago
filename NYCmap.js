@@ -54,6 +54,8 @@ var svg = d3.select("#parentSVG")
 //Should a detailed tooltip be shown?
 var DetailedTooltip=false;
 
+var popRange, lifeRange, incomeRange, crimeRange;
+
 //To make NY data Global
 var NYdatum;
 
@@ -65,10 +67,11 @@ d3.json("NYData.json", function(error, json) {
     NYdatum = features;
     
     //data Ranges
-    var popRange=minMax("population", json);//51673,247354
-    var lifeRange=minMax("lifeExpectancy", json);//74,85
-    var incomeRange=minMax("incomePerCapita", json);//11042,99858
-    var crimeRange=minMax("crimePerK",json);//3.75,98.63
+    popRange=minMax("population", json);//51673,247354
+    lifeRange=minMax("lifeExpectancy", json);//74,85
+    
+    incomeRange=minMax("incomePerCapita", json);//11042,99858
+    crimeRange=minMax("crimePerK",json);//3.75,98.63
     
     var projection = d3.geo.mercator()
   					.center([-73.94, 40.70])
@@ -280,7 +283,19 @@ d3.json("ChicagoData.json", function(error, json) {
 document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
+
+var slider = document.getElementById('slider');
+        noUiSlider.create(slider, {
+	       start: [0, 50],
+           tooltips:[true,true],
+           behaviour: 'drag-tap',
+	       connect: true,
+	       range: {
+		      'min': 0,
+		      'max': 100
+	       }
+        });
 
 //button functions
 function Population() {
@@ -298,6 +313,7 @@ function Life() {
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
     ShowLegendPLIC(0,1,0,0);
+    UpdateSlider(lifeRange);
 }
 function Income() {
     tooltip.style("background","rgba(114, 212, 141,0.94)");
@@ -306,6 +322,7 @@ function Income() {
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
+    UpdateSlider(incomeRange);
 }
 function Crime() {
     tooltip.style("background","rgba(242, 145, 132,0.94)");
@@ -314,6 +331,7 @@ function Crime() {
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
     ShowLegendPLIC(0,0,0,1);
+    UpdateSlider(crimeRange);
 }
 
 //-----Helper Functions------//
@@ -321,6 +339,18 @@ function Crime() {
 function minMax(toGet,d){
         data = d.objects.features.geometries;
     return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
+}
+
+function UpdateSlider(rangeVals){
+    alert(rangeVals);
+    slider.noUiSlider.updateOptions({
+        range:{
+            'min':rangeVals[0],
+            'max':rangeVals[1]
+        }
+    });
+    
+    slider.noUiSlider.set([rangeVals[0]+5, rangeVals[1]]);
 }
 
 //draws colors for the buttons
