@@ -348,6 +348,7 @@ function UpdateSlider(rangeVals){
             'min':rangeVals[0],
             'max':rangeVals[1]
         }
+        
     });
     
     slider.noUiSlider.set([rangeVals[0]+5, rangeVals[1]]);
