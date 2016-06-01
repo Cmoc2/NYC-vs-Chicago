@@ -25,7 +25,7 @@ var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
-var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"income",crime:"crimePerK"},selectC,selectNY;
+var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"incomePerCapita",crime:"crimePerK"},selectC,selectNY;
 
 //an SVG to append both svg's
 var parentSVG= d3.select("body")
@@ -67,7 +67,7 @@ d3.json("NYData.json", function(error, json) {
     //data Ranges
     var popRange=minMax("population", json);//51673,247354
     var lifeRange=minMax("lifeExpectancy", json);//74,85
-    var incomeRange=minMax("income", json);//11042,99858
+    var incomeRange=minMax("incomePerCapita", json);//11042,99858
     var crimeRange=minMax("crimePerK",json);//3.75,98.63
     
     var projection = d3.geo.mercator()
@@ -97,7 +97,7 @@ d3.json("NYData.json", function(error, json) {
             } else
             //if showing general information:
             if(!DetailedTooltip) {
-                TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+                TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
             } else{d3.select(this).style("fill","yellow"); //else show details on topic.
                 tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
@@ -113,7 +113,7 @@ d3.json("NYData.json", function(error, json) {
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
                     HoverHighlight(this,selectNY);
-                    TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+                    TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{ d3.select(this).style("fill","yellow");
                        tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
@@ -318,7 +318,7 @@ function Income() {
     selectC=tipDetail.incomeC;
     selectNY=tipDetail.incomeNY;
     select_colors=income_colors;
-    ColorScheme(NYdatum,svg,income_colors,"income");
+    ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
 }
