@@ -25,7 +25,7 @@ var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
-var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"incomePerCapita",crime:"crimePerK"},selectC,selectNY;
+var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",income:"incomePerCapita",crime:"crimePerK"},select;
 
 //an SVG to append both svg's
 var parentSVG= d3.select("body")
@@ -112,7 +112,7 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    HoverHighlight(this,selectNY);
+                    HoverHighlight(this,select);
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{ d3.select(this).style("fill","yellow");
                        tooltip.html(
@@ -130,7 +130,7 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
-            HoverHighlight(this,selectNY);
+            HoverHighlight(this,select);
            //return tooltip.style("visibility","hidden");
         })
         //New York City Label
@@ -177,7 +177,7 @@ d3.json("NYData.json", function(error, json) {
                         +"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income per Capita: "+d.properties.income+"<br/>"
+                        +"Income per Capita: "+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]);
     }
 });
@@ -243,7 +243,7 @@ d3.json("ChicagoData.json", function(error, json) {
     .on("click", function(d){
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
-            HoverHighlight(this,selectC);
+            HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
             d3.select(this).style("fill","yellow");
@@ -257,7 +257,7 @@ d3.json("ChicagoData.json", function(error, json) {
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
-        HoverHighlight(this,selectC);
+        HoverHighlight(this,select);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -280,25 +280,12 @@ d3.json("ChicagoData.json", function(error, json) {
 document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
-
-//Slider
-var slider = document.getElementById('slider');
-noUiSlider.create(slider, {
-	start: [20, 80],
-    connect: true,
-    tooltips:[true,true],
-	range: {
-		'min': [ 0 ],
-		'max': [ 100 ]
-	}
-});
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button></div>');
 
 //button functions
 function Population() {
     tooltip.style("background","rgba(176, 196, 222,0.94)");
-    selectC=tipDetail.population;
-    selectNY=tipDetail.population;
+    select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
@@ -306,8 +293,7 @@ function Population() {
 }
 function Life() {
     tooltip.style("background","rgba(248, 161, 41, 0.94)");
-    selectC=tipDetail.lifeExpectancy;
-    selectNY=tipDetail.lifeExpectancy;
+    select=tipDetail.lifeExpectancy;
     select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
@@ -315,8 +301,7 @@ function Life() {
 }
 function Income() {
     tooltip.style("background","rgba(114, 212, 141,0.94)");
-    selectC=tipDetail.incomeC;
-    selectNY=tipDetail.incomeNY;
+    select=tipDetail.income;
     select_colors=income_colors;
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
@@ -324,8 +309,7 @@ function Income() {
 }
 function Crime() {
     tooltip.style("background","rgba(242, 145, 132,0.94)");
-    selectC=tipDetail.crime;
-    selectNY=tipDetail.crime;
+    select=tipDetail.crime;
     select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
