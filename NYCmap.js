@@ -63,6 +63,7 @@ d3.json("NYData.json", function(error, json) {
     if (error) return console.error(error);
     
     var features = topojson.feature(json,json.objects.features);
+    
     //copy to global variable
     NYdatum = features;
     
@@ -107,7 +108,7 @@ d3.json("NYData.json", function(error, json) {
                         +"</b></center><br/>"
                         +"Detailed Info");
             }
-
+            //tooltip is initially hidden, activates when mouse first goes over map.
             return tooltip.style("display","inline");
         })
         .on("click", function(d){
@@ -133,7 +134,6 @@ d3.json("NYData.json", function(error, json) {
             .duration(500)
             .style("opacity", 0);
             HoverHighlight(this,select);
-           //return tooltip.style("visibility","hidden");
         })
         //New York City Label
     svg.append("text")
@@ -146,7 +146,6 @@ d3.json("NYData.json", function(error, json) {
     .delay(500)
     .style("opacity",1);
     
-    Population();
     //Helper functions (Only for NY)
     //NY-remove the hundreth digit from the Districts.
     function bDistrict(d){
@@ -182,6 +181,13 @@ d3.json("NYData.json", function(error, json) {
                         +"Income per Capita: "+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]);
     }
+    //Gets the map coloring started @ Population
+    tooltip.style("background","rgba(176, 196, 222,0.94)");
+    select=tipDetail.population;
+    select_colors=pop_colors;
+    ColorScheme(NYdatum,svg,pop_colors,"population");  
+    ShowLegendPLIC(1,0,0,0);
+    UpdateSlider([2500,250000]);
 });
 
 //SVG for Chicago
@@ -208,7 +214,7 @@ d3.json("ChicagoData.json", function(error, json) {
     
     //copy features to global
     Cdatum = features;
-    
+
     //allows view of the map (Otherwise it'll be drawn off-screen)
     var projection = d3.geo.albers()
                     .center([8.25, 41.88205])
@@ -225,7 +231,6 @@ d3.json("ChicagoData.json", function(error, json) {
     .attr("class", "Cfeatures")
     .attr("d", path)
     .on("mouseover", function(d){
-        tooltip.style("height","100px").style("width","175px");
         tooltip.transition()
         .duration(200)
         .style("opacity", .9);
@@ -233,26 +238,39 @@ d3.json("ChicagoData.json", function(error, json) {
         if(!DetailedTooltip){
         TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
+            tooltip.style("height","143px").style("width","175px");
             d3.select(this).style("fill", "yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Below poverty: "+d.properties.percentbelowpoverty
-                +"%<br>16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>Detailed Info");
-               }
-        //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
+                +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
+                +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
+                +"Below poverty: "+d.properties.percentbelowpoverty+"%<br>"
+                +"16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>"
+                +"Violent crimes: "+d.properties.violentCrimes+"%<br>"
+                +"Harship Index: "+d.properties.hardshipIndex+"<br>"
+            );
+        }
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
     })
     .on("click", function(d){
+        console.log(d);
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
+            tooltip.style("height","100px").style("width","175px");
             HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
+            tooltip.style("height","143px").style("width","175px");
             d3.select(this).style("fill","yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Percent Below Poverty: "+ d.properties.percentbelowpoverty)
-                    +"Detailed tooltip";
-            }
+                +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
+                +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
+                +"Below poverty: "+d.properties.percentbelowpoverty+"%<br>"
+                +"16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>"
+                +"Violent crimes: "+d.properties.violentCrimes+"<br>"
+                +"Harship Index: "+d.properties.hardshipIndex+"<br>"
+            );
+        }
     })
     .on("mousemove", function(d){
         //update tooltip position
@@ -275,6 +293,9 @@ d3.json("ChicagoData.json", function(error, json) {
     .transition(2000)
     .delay(500)
     .style("opacity",1);
+    
+    //initial shading of the map.
+    ColorScheme(Cdatum,svg2,pop_colors,"population");
 });
 //Draw the buttons
 document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
@@ -332,10 +353,16 @@ function Crime() {
     UpdateSlider(crimeRange);
 }
 
+//Gets the legend started. Hidden
+AppendLegend(pop_colors,pop,popText,"poplegend",0);
+AppendLegend(life_colors,life,lifeText,"lifelegend",0);
+AppendLegend(income_colors,income,incomeText,"incomelegend",0);
+AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
+
 //-----Helper Functions------//
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
-                data = d.objects.features.geometries;
+    var data = d.objects.features.geometries;
     return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
 }
 
@@ -357,7 +384,6 @@ slider.noUiSlider.on('slide', function(){
 });
 
 function SlideTracker(NYdata,CData,NYmap,Cmap,color,property,setVals){
-    console.log(setVals);
      NYmap.selectAll("path")
     .data(NYdata.features)
     .transition().duration(1000)
@@ -393,11 +419,6 @@ function ColorScheme(data,map,color,property){
       if (d.properties[property]) return color(d.properties[property]);
       else return "white"});  
 }
-
-AppendLegend(pop_colors,pop,popText,"poplegend",0);
-AppendLegend(life_colors,life,lifeText,"lifelegend",0);
-AppendLegend(income_colors,income,incomeText,"incomelegend",0);
-AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
     var xPos=450;
