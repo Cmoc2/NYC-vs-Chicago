@@ -25,12 +25,20 @@ var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
-var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",incomeC:"incomePerCapita",incomeNY:"income",crime:"crimePerK"},selectC,selectNY;
+var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",income:"incomePerCapita",crime:"crimePerK"},select;
 
-//an SVG for New York
-var svg = d3.select("body")
+//an SVG to append both svg's
+var parentSVG= d3.select("body")
     .attr("align","center")
     .append("svg")
+    .attr("id","parentSVG")
+    .attr("align","center")
+    .attr("width", width*2)
+    .attr("height", height);
+//an SVG for New York
+var svg = d3.select("#parentSVG")
+    .append("svg")
+    .attr("align","center")
     .attr("width", width)
     .attr("height", height);
 
@@ -46,6 +54,8 @@ var svg = d3.select("body")
 //Should a detailed tooltip be shown?
 var DetailedTooltip=false;
 
+var popRange, lifeRange, incomeRange, crimeRange;
+
 //To make NY data Global
 var NYdatum;
 
@@ -57,12 +67,15 @@ d3.json("NYData.json", function(error, json) {
     NYdatum = features;
     
     //data Ranges
-    var popRange=minMax("population", json);
+    popRange=minMax("population", json);//51673,247354
+    lifeRange=minMax("lifeExpectancy", json);//74,85
+    incomeRange=minMax("incomePerCapita", json);//11042,99858
+    crimeRange=minMax("crimePerK",json);//3.75,98.63
     
     var projection = d3.geo.mercator()
   					.center([-73.94, 40.70])
   					.scale(54000)
-  					.translate([(width) / 2, (height)/2]);
+  					.translate([(width/2)+30, (height)/2]);
     
     var path = d3.geo.path().projection(projection);
 
@@ -86,7 +99,7 @@ d3.json("NYData.json", function(error, json) {
             } else
             //if showing general information:
             if(!DetailedTooltip) {
-                TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+                TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
             } else{d3.select(this).style("fill","yellow"); //else show details on topic.
                 tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
@@ -101,8 +114,8 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    HoverHighlight(this,selectNY);
-                    TooltipTextNY(d,"boro_name","population","lifeExpectancy","income","crimePerK");
+                    HoverHighlight(this,select);
+                    TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{ d3.select(this).style("fill","yellow");
                        tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
@@ -119,12 +132,12 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
-            HoverHighlight(this,selectNY);
-           //return tooltip.style("visibility","hidden");
+        
+            HoverHighlight(this,select);
         })
         //New York City Label
     svg.append("text")
-    .attr("x",40)
+    .attr("x",70)
     .attr("y",100)
     .attr("id","nyLabel")
     .style("opacity",0)
@@ -166,27 +179,29 @@ d3.json("NYData.json", function(error, json) {
                         +"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income per Capita: "+d.properties.income+"<br/>"
+                        +"Income per Capita: "+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]);
     }
 });
 
-
 //SVG for Chicago
-var svg2= d3.select("body")
+var svg2= d3.select("#parentSVG")
     .append("svg")
+    .attr("align","center")
+    .attr("x",width)
     .attr("width", width)
     .attr("height", height);
-
+//To make Chicago data global
+var Cdatum;
 ///Chicago Map with data
 d3.json("ChicagoData.json", function(error, json) {
     if (error) return console.error(error);
    
     //data Ranges: Population,LifeExpectancy,CrimePerK,income
-    var popRange=minMax("population",json);//2916,98514
-    var lifeRange=minMax("lifeExpectancy",json);
-    var crimeRange=minMax("crimePerK",json);//0.27,51.33
-    var incomeRange=minMax("incomePerCapita",json);//8201,88669
+    popRange=minMax("population",json);//2916,98514
+    lifeRange=minMax("lifeExpectancy",json);//68.8,85.2
+    crimeRange=minMax("crimePerK",json);//0.27,51.33
+    incomeRange=minMax("incomePerCapita",json);//8201,88669
     
      //location of geometries/properties
     var features = topojson.feature(json,json.objects.features);
@@ -220,7 +235,8 @@ d3.json("ChicagoData.json", function(error, json) {
         } else {
             d3.select(this).style("fill", "yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Detailed Info");
+                +"Below poverty: "+d.properties.percentbelowpoverty
+                +"%<br>16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>Detailed Info");
                }
         //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
         //tooltip activates the moment the mouse first goes over the map.
@@ -229,12 +245,13 @@ d3.json("ChicagoData.json", function(error, json) {
     .on("click", function(d){
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
-            HoverHighlight(this,selectC);
+            HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
             d3.select(this).style("fill","yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Detailed Info");
+                    +"Percent Below Poverty: "+ d.properties.percentbelowpoverty)
+                    +"Detailed tooltip";
             }
     })
     .on("mousemove", function(d){
@@ -242,7 +259,7 @@ d3.json("ChicagoData.json", function(error, json) {
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
-        HoverHighlight(this,selectC);
+        HoverHighlight(this,select);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -260,52 +277,111 @@ d3.json("ChicagoData.json", function(error, json) {
     .style("opacity",1);
     Population();
 });
-
 //Draw the buttons
-document.write('<br><div align="left"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
+document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><br/></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
+
+var slider = document.getElementById('slider');
+noUiSlider.create(slider, {
+    start: [51000,51000],
+    tooltips:[true,true],
+    behaviour: 'drag-tap',
+	connect: true,
+	range: {
+	'min': 51000,
+	'max': 247354
+    }
+        });
 
 //button functions
 function Population() {
-    selectC=tipDetail.population;
-    selectNY=tipDetail.population;
+    tooltip.style("background","rgba(176, 196, 222,0.94)");
+    select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
     ShowLegendPLIC(1,0,0,0);
+    UpdateSlider([2500,250000]);
 }
 function Life() {
-    selectC=tipDetail.lifeExpectancy;
-    selectNY=tipDetail.lifeExpectancy;
+    tooltip.style("background","rgba(248, 161, 41, 0.94)");
+    select=tipDetail.lifeExpectancy;
     select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
     ShowLegendPLIC(0,1,0,0);
+    UpdateSlider(lifeRange);
 }
 function Income() {
-    selectC=tipDetail.incomeC;
-    selectNY=tipDetail.incomeNY;
+    tooltip.style("background","rgba(114, 212, 141,0.94)");
+    select=tipDetail.income;
     select_colors=income_colors;
-    ColorScheme(NYdatum,svg,income_colors,"income");
+    ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
+    UpdateSlider(incomeRange);
 }
 function Crime() {
-    selectC=tipDetail.crime;
-    selectNY=tipDetail.crime;
+    tooltip.style("background","rgba(242, 145, 132,0.94)");
+    select=tipDetail.crime;
     select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
     ShowLegendPLIC(0,0,0,1);
+    UpdateSlider(crimeRange);
 }
 
 //-----Helper Functions------//
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
-        data = d.objects.features.geometries;
+                data = d.objects.features.geometries;
     return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
+}
+
+function UpdateSlider(rangeVals){
+    slider.noUiSlider.updateOptions({
+        range:{
+            'min':(rangeVals[0]-5),
+            'max':(rangeVals[1]+5)
+        }
+        
+    });
+    slider.noUiSlider.set([rangeVals[0]-5, rangeVals[0]]); 
+    
+    
+}
+
+slider.noUiSlider.on('slide', function(){
+    SlideTracker(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
+});
+
+function SlideTracker(NYdata,CData,NYmap,Cmap,color,property,setVals){
+    console.log(setVals);
+     NYmap.selectAll("path")
+    .data(NYdata.features)
+    .transition().duration(1000)
+    .style("fill",
+      function(d) {
+      if (d.properties[property]){ 
+          if(d.properties[property] >= setVals[0]  && d.properties[property] <= setVals[1])
+            return "yellow";
+          else return color(d.properties[property]);
+      }
+      else return "white"});
+   ///////////////////////////// 
+    Cmap.selectAll("path")
+    .data(CData.features)
+    .transition().duration(1000)
+    .style("fill",
+      function(d) {
+      if (d.properties[property]){ 
+          if(d.properties[property] >= setVals[0]  && d.properties[property] <= setVals[1])
+            return "yellow";
+          else return color(d.properties[property]);
+      }
+      else return "white"});
 }
 
 //draws colors for the buttons
@@ -325,7 +401,8 @@ AppendLegend(income_colors,income,incomeText,"incomelegend",0);
 AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
-    svg.selectAll(".legend")
+    var xPos=450;
+    parentSVG.selectAll(".legend")
         .data(cScale.domain(),function(d){return d;})
         .enter()
         .append("g")
@@ -333,8 +410,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .attr("opacity",opacity)
         .append("rect")
         //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return 220 + (55 * i);})
-        .attr("y", height-40)
+        .attr("x", function(d,i){ return xPos + (55 * i);})
+        .attr("y", height-70)
         .attr("width", 55)
         .attr("height", 15)
         .attr("fill", function(d, i){ return brewSet[i];})
@@ -342,11 +419,11 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .style("stroke-width", "2px")
         .style("opacity",1);
     //further appending will append it inside rect. Starting again appending to g.
-    svg.selectAll("g."+cssClass)
+    parentSVG.selectAll("g."+cssClass)
         .append("text")
         .attr("class", cssClass)
-        .attr("x", function(d,i){ return 225 + (55 * i);})
-        .attr("y", height-15)
+        .attr("x", function(d,i){ return xPos+5+ (55 * i);})
+        .attr("y", height-45)
         .attr("width", 200)
         .attr("height", 15)
         .style("opacity",opacity)

@@ -23,6 +23,7 @@ body{
     font: 35px sans-serif;
     fill: rgba(128, 128, 128, 0.86);
 }
+
 div.tooltip {	
     position: absolute;			
     text-align: left;			
@@ -35,7 +36,33 @@ div.tooltip {
     border-radius: 8px;			
     pointer-events: none;			
 }
+div#ny-vs-chicago-title{
+    font: 15px Tahoma, Helvetica, Arial, Sans-Serif;
+	text-align: center;
+    color: #222;
+    text-shadow: 0px 2px 3px #F7F7EB;
+}
 
+div#slider{
+    position:relative;
+    top:-30px;
+    left:550px;
+    width:400px;
+}
+
+.Cfeatures{
+    fill: #B3DDF2;
+    stroke: #777;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+
+.NYfeatures{
+    fill: white;
+    stroke: #777;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
 .PopButton {
 -moz-box-shadow: 0px 0px 0px 2px #3182bd;
 	-webkit-box-shadow: 0px 0px 0px 2px #3182bd;
@@ -130,4 +157,14 @@ div.tooltip {
 .IncomeButton:hover {
   background: rgb(49,163,84);
   text-decoration: none;
+}
+
+#chicagoLabel{
+    font: 35px sans-serif;
+    fill: rgba(128, 128, 128, 0.86);
+}
+
+#nyLabel{			
+    font: 35px sans-serif;
+    fill: rgba(128, 128, 128, 0.86);
 }
