@@ -69,7 +69,6 @@ d3.json("NYData.json", function(error, json) {
     //data Ranges
     popRange=minMax("population", json);//51673,247354
     lifeRange=minMax("lifeExpectancy", json);//74,85
-    
     incomeRange=minMax("incomePerCapita", json);//11042,99858
     crimeRange=minMax("crimePerK",json);//3.75,98.63
     
@@ -185,7 +184,6 @@ d3.json("NYData.json", function(error, json) {
     }
 });
 
-
 //SVG for Chicago
 var svg2= d3.select("#parentSVG")
     .append("svg")
@@ -193,16 +191,17 @@ var svg2= d3.select("#parentSVG")
     .attr("x",width)
     .attr("width", width)
     .attr("height", height);
-
+//To make Chicago data global
+var Cdatum;
 ///Chicago Map with data
 d3.json("ChicagoData.json", function(error, json) {
     if (error) return console.error(error);
    
     //data Ranges: Population,LifeExpectancy,CrimePerK,income
-    var popRange=minMax("population",json);//2916,98514
-    var lifeRange=minMax("lifeExpectancy",json);
-    var crimeRange=minMax("crimePerK",json);//0.27,51.33
-    var incomeRange=minMax("incomePerCapita",json);//8201,88669
+    popRange=minMax("population",json);//2916,98514
+    lifeRange=minMax("lifeExpectancy",json);//68.8,85.2
+    crimeRange=minMax("crimePerK",json);//0.27,51.33
+    incomeRange=minMax("incomePerCapita",json);//8201,88669
     
      //location of geometries/properties
     var features = topojson.feature(json,json.objects.features);
@@ -276,9 +275,7 @@ d3.json("ChicagoData.json", function(error, json) {
     .transition(2000)
     .delay(500)
     .style("opacity",1);
-    Population();
 });
-
 //Draw the buttons
 document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
@@ -286,15 +283,15 @@ document.write('<button id="income" class="IncomeButton" onclick="Income();">Inc
 document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
 
 var slider = document.getElementById('slider');
-        noUiSlider.create(slider, {
-	       start: [0, 50],
-           tooltips:[true,true],
-           behaviour: 'drag-tap',
-	       connect: true,
-	       range: {
-		      'min': 0,
-		      'max': 100
-	       }
+noUiSlider.create(slider, {
+    start: [51000,51000],
+    tooltips:[true,true],
+    behaviour: 'drag-tap',
+	connect: true,
+	range: {
+	'min': 51000,
+	'max': 247354
+    }
         });
 
 //button functions
@@ -305,6 +302,7 @@ function Population() {
     ColorScheme(NYdatum,svg,pop_colors,"population");
     ColorScheme(Cdatum,svg2,pop_colors,"population");  
     ShowLegendPLIC(1,0,0,0);
+    UpdateSlider([2500,250000]);
 }
 function Life() {
     tooltip.style("background","rgba(248, 161, 41, 0.94)");
@@ -337,21 +335,52 @@ function Crime() {
 //-----Helper Functions------//
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
-        data = d.objects.features.geometries;
+                data = d.objects.features.geometries;
     return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
 }
 
 function UpdateSlider(rangeVals){
-    alert(rangeVals);
     slider.noUiSlider.updateOptions({
         range:{
-            'min':rangeVals[0],
-            'max':rangeVals[1]
+            'min':(rangeVals[0]-5),
+            'max':(rangeVals[1]+5)
         }
         
     });
+    slider.noUiSlider.set([rangeVals[0]-5, rangeVals[0]]); 
     
-    slider.noUiSlider.set([rangeVals[0]+5, rangeVals[1]]);
+    
+}
+
+slider.noUiSlider.on('slide', function(){
+    SlideTracker(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
+});
+
+function SlideTracker(NYdata,CData,NYmap,Cmap,color,property,setVals){
+    console.log(setVals);
+     NYmap.selectAll("path")
+    .data(NYdata.features)
+    .transition().duration(1000)
+    .style("fill",
+      function(d) {
+      if (d.properties[property]){ 
+          if(d.properties[property] >= setVals[0]  && d.properties[property] <= setVals[1])
+            return "yellow";
+          else return color(d.properties[property]);
+      }
+      else return "white"});
+   ///////////////////////////// 
+    Cmap.selectAll("path")
+    .data(CData.features)
+    .transition().duration(1000)
+    .style("fill",
+      function(d) {
+      if (d.properties[property]){ 
+          if(d.properties[property] >= setVals[0]  && d.properties[property] <= setVals[1])
+            return "yellow";
+          else return color(d.properties[property]);
+      }
+      else return "white"});
 }
 
 //draws colors for the buttons
