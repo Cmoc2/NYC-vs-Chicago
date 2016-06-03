@@ -101,7 +101,7 @@ d3.json("NYData.json", function(error, json) {
             //if showing general information:
             if(!DetailedTooltip) {
                 TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-            } else{d3.select(this).style("fill","yellow"); //else show details on topic.
+            } else{//d3.select(this).style("fill","yellow"); //else show details on topic.
                 tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
                         + bDistrict(d)
@@ -115,9 +115,9 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    HoverHighlight(this,select);
+                    //HoverHighlight(this,select);
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-                } else{ d3.select(this).style("fill","yellow");
+                } else{ //d3.select(this).style("fill","yellow");
                        tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
                         + bDistrict(d)
@@ -133,7 +133,7 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
-            HoverHighlight(this,select);
+            //HoverHighlight(this,select);
         })
         //New York City Label
     svg.append("text")
@@ -236,7 +236,8 @@ d3.json("ChicagoData.json", function(error, json) {
         .style("opacity", .9);
         //change what's inside the tooltip
         if(!DetailedTooltip){
-        TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
+            tooltip.style("height","100px").style("width","175px");
+            TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
             tooltip.style("height","143px").style("width","175px");
             d3.select(this).style("fill", "yellow");
@@ -257,11 +258,11 @@ d3.json("ChicagoData.json", function(error, json) {
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
             tooltip.style("height","100px").style("width","175px");
-            HoverHighlight(this,select);
+            //HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
             tooltip.style("height","143px").style("width","175px");
-            d3.select(this).style("fill","yellow");
+            //d3.select(this).style("fill","yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
                 +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
                 +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
@@ -277,7 +278,7 @@ d3.json("ChicagoData.json", function(error, json) {
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
-        HoverHighlight(this,select);
+        //HoverHighlight(this,select);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -298,10 +299,10 @@ d3.json("ChicagoData.json", function(error, json) {
     ColorScheme(Cdatum,svg2,pop_colors,"population");
 });
 //Draw the buttons
-document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
-document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
-document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
+document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
+document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
+document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
+document.write('<button align="left" id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div></div>');
 
 var slider = document.getElementById('slider');
 noUiSlider.create(slider, {
@@ -421,19 +422,19 @@ function ColorScheme(data,map,color,property){
 }
 
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
-    var xPos=450;
+    var xPos=600;
     parentSVG.selectAll(".legend")
         .data(cScale.domain(),function(d){return d;})
         .enter()
         .append("g")
         .attr("class", cssClass)
         .attr("opacity",opacity)
-        .append("rect")
+        .append("rect")//55*i
         //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return xPos + (55 * i);})
-        .attr("y", height-70)
-        .attr("width", 55)
-        .attr("height", 15)
+        .attr("x", function(d,i){ return xPos ;})
+        .attr("y", function(d,i){return height-70-(55*i)})
+        .attr("width", 15)
+        .attr("height", 55)
         .attr("fill", function(d, i){ return brewSet[i];})
         .style("stroke", "rgba(105, 105, 105, 0.86)")
         .style("stroke-width", "2px")
@@ -442,8 +443,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
     parentSVG.selectAll("g."+cssClass)
         .append("text")
         .attr("class", cssClass)
-        .attr("x", function(d,i){ return xPos+5+ (55 * i);})
-        .attr("y", height-45)
+        .attr("x", function(d){ return xPos+25})
+        .attr("y", function(d,i){return height-45-(55*i)})
         .attr("width", 200)
         .attr("height", 15)
         .style("opacity",opacity)
