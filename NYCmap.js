@@ -42,6 +42,15 @@ var svg = d3.select("#parentSVG")
     .attr("width", width)
     .attr("height", height);
 
+//d3 tooltip
+var tip = d3.tip()
+  .attr('class', 'd3-tip')
+  .offset([-10, 0])
+  .html(function(d) {
+    return "<strong>Frequency:</strong> <span style='color:red'>" + d.properties.population + "</span>";
+  });
+svg.call(tip);
+
 //space for tooltip
     var tooltip = d3.select("body")
 	.append("div")
@@ -86,31 +95,7 @@ d3.json("NYData.json", function(error, json) {
         .enter().append("path")
         .attr("class", "NYfeatures")
         .attr("d", path)
-        .on("mouseover", function(d){
-            //fit the tooltip to the information shown
-            tooltip.style("height","95px").style("width","175px");
-            tooltip.transition()
-            .duration(200)
-            .style("opacity", .9);
-            //change the details inside the tooltip
-            //skip the rest if theres no data to show
-            if(bDistrict(d)=="bearsNstuff"){
-                tooltip.style("height","15px").style("width","115px");
-                tooltip.html("Unpopulated Area");
-            } else
-            //if showing general information:
-            if(!DetailedTooltip) {
-                TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-            } else{//d3.select(this).style("fill","yellow"); //else show details on topic.
-                tooltip.html(
-                        "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
-                        +"Detailed Info");
-            }
-            //tooltip is initially hidden, activates when mouse first goes over map.
-            return tooltip.style("display","inline");
-        })
+        .on("mouseover", tip.show)
         .on("click", function(d){
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
@@ -127,7 +112,7 @@ d3.json("NYData.json", function(error, json) {
             }
         })
         .on("mousemove", function(d){
-            return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+            return tip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
         })
         .on("mouseout", function(d){
             tooltip.transition()
@@ -197,6 +182,8 @@ var svg2= d3.select("#parentSVG")
     .attr("x",width)
     .attr("width", width)
     .attr("height", height);
+
+svg2.call(tip);
 //To make Chicago data global
 var Cdatum;
 ///Chicago Map with data
@@ -230,29 +217,7 @@ d3.json("ChicagoData.json", function(error, json) {
   .enter().append("path")
     .attr("class", "Cfeatures")
     .attr("d", path)
-    .on("mouseover", function(d){
-        tooltip.transition()
-        .duration(200)
-        .style("opacity", .9);
-        //change what's inside the tooltip
-        if(!DetailedTooltip){
-            tooltip.style("height","100px").style("width","175px");
-            TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
-        } else {
-            tooltip.style("height","143px").style("width","175px");
-            d3.select(this).style("fill", "yellow");
-            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
-                +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
-                +"Below poverty: "+d.properties.percentbelowpoverty+"%<br>"
-                +"16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>"
-                +"Violent crimes: "+d.properties.violentCrimes+"%<br>"
-                +"Harship Index: "+d.properties.hardshipIndex+"<br>"
-            );
-        }
-        //tooltip activates the moment the mouse first goes over the map.
-        return tooltip.style("display","inline");
-    })
+    .on("mouseover", tip.show)
     .on("click", function(d){
         console.log(d);
         DetailedTooltip=!DetailedTooltip; //toggle.
