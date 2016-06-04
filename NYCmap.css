@@ -9,10 +9,11 @@ div.tooltip {
     height: 110px;					
     padding: 10px;				
     font: 14px sans-serif;		
-    background: lightsteelblue;
+    background: black;
+    color: white;
     border: 5px;		
     border-radius: 8px;			
-    pointer-events: none;			
+    pointer-events: none;	
 }
 div#ny-vs-chicago-title{
     font: 15px Tahoma, Helvetica, Arial, Sans-Serif;

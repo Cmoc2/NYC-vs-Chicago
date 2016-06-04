@@ -180,7 +180,6 @@ d3.json("NYData.json", function(error, json) {
                         +"Crime: "+d.properties[crime]);
     }
     //Gets the map coloring started @ Population
-    tooltip.style("background","rgba(176, 196, 222,0.94)");
     select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");  
@@ -313,7 +312,6 @@ noUiSlider.create(slider, {
 
 //button functions
 function Population() {
-    tooltip.style("background","rgba(176, 196, 222,0.94)");
     select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
@@ -322,7 +320,6 @@ function Population() {
     UpdateSlider([2500,250000]);
 }
 function Life() {
-    tooltip.style("background","rgba(248, 161, 41, 0.94)");
     select=tipDetail.lifeExpectancy;
     select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
@@ -331,7 +328,6 @@ function Life() {
     UpdateSlider(lifeRange);
 }
 function Income() {
-    tooltip.style("background","rgba(114, 212, 141,0.94)");
     select=tipDetail.income;
     select_colors=income_colors;
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
@@ -340,7 +336,6 @@ function Income() {
     UpdateSlider(incomeRange);
 }
 function Crime() {
-    tooltip.style("background","rgba(242, 145, 132,0.94)");
     select=tipDetail.crime;
     select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
