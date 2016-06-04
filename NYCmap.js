@@ -287,7 +287,9 @@ noUiSlider.create(slider, {
 	'max': 42
     }
 });
-slider.noUiSlider.on('update', function(values,handle){
+sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
+sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
+slider.noUiSlider.on('slide', function(values,handle){
     sliderValues[handle].innerHTML=values[handle];
     Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
 });
@@ -343,13 +345,14 @@ function minMax(toGet,d){
 function UpdateSlider(rangeVals){
     slider.noUiSlider.updateOptions({
         range:{
-            'min':(rangeVals[0]-5),
+            'min':(rangeVals[0]-2),
             'max':(rangeVals[1]+5)
         }
         
     });
-    slider.noUiSlider.set([rangeVals[0]-5, rangeVals[0]]); 
-    
+    slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]]); 
+    sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
+    sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
     
 }
 
@@ -438,7 +441,7 @@ function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
         .transition(1000)
         .style("opacity",crimeOpac);
 }
-//NY-remove the hundreth digit from the Districts.
+//NY-remove the hundredth digit from the Districts.
 function bDistrict(d){
     var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
     switch(d.properties.boro_name){
