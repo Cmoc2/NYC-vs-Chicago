@@ -115,7 +115,6 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    //HoverHighlight(this,select);
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{ //d3.select(this).style("fill","yellow");
                        tooltip.html(
@@ -133,7 +132,6 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
-            //HoverHighlight(this,select);
         })
         //New York City Label
     svg.append("text")
@@ -240,7 +238,6 @@ d3.json("ChicagoData.json", function(error, json) {
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
             tooltip.style("height","143px").style("width","175px");
-            d3.select(this).style("fill", "yellow");
             tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
                 +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
                 +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
@@ -258,7 +255,6 @@ d3.json("ChicagoData.json", function(error, json) {
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
             tooltip.style("height","100px").style("width","175px");
-            //HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
             tooltip.style("height","143px").style("width","175px");
@@ -278,7 +274,6 @@ d3.json("ChicagoData.json", function(error, json) {
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
-        //HoverHighlight(this,select);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -422,7 +417,7 @@ function ColorScheme(data,map,color,property){
 }
 
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
-    var xPos=600;
+    var legendHeight=600;
     parentSVG.selectAll(".legend")
         .data(cScale.domain(),function(d){return d;})
         .enter()
@@ -431,8 +426,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .attr("opacity",opacity)
         .append("rect")//55*i
         //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return xPos ;})
-        .attr("y", function(d,i){return height-70-(55*i)})
+        .attr("x", 600)
+        .attr("y", function(d,i){return height-175-(55*i)})
         .attr("width", 15)
         .attr("height", 55)
         .attr("fill", function(d, i){ return brewSet[i];})
@@ -443,8 +438,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
     parentSVG.selectAll("g."+cssClass)
         .append("text")
         .attr("class", cssClass)
-        .attr("x", function(d){ return xPos+25})
-        .attr("y", function(d,i){return height-45-(55*i)})
+        .attr("x", function(d){ return 600+25})
+        .attr("y", function(d,i){return height-140-(55*i)})
         .attr("width", 200)
         .attr("height", 15)
         .style("opacity",opacity)
