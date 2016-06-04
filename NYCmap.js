@@ -19,7 +19,7 @@ var income = colorbrewer.Greens[6];
 var crime = colorbrewer.Reds[8];
 
 //add for legend scale text reference
-var popText = ["40000+", 80000, 120000, 160000, 200000, 220000];
+var popText = ["0-40K", "40K-80K", "80K-120K", "120K-160K","160K-200K","200K+"];
 var lifeText = [60, 70, 80, 90, 100];
 var incomeText = [5000, 15000, 40000, 80000, 100000];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
@@ -144,31 +144,6 @@ d3.json("NYData.json", function(error, json) {
     .delay(500)
     .style("opacity",1);
     
-    //Helper functions (Only for NY)
-    //NY-remove the hundreth digit from the Districts.
-    function bDistrict(d){
-                var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
-                switch(d.properties.boro_name){
-                    case ManString[0]:
-                        return d.properties.boro_cd-ManString[1];
-                        break;
-                    case BronxString[0]:
-                        return d.properties.boro_cd-BronxString[1];
-                        break;
-                    case BrookString[0]:
-                        return d.properties.boro_cd-BrookString[1];
-                        break;
-                    case qString[0]:
-                        return d.properties.boro_cd-qString[1];
-                        break;
-                    case StateString[0]:
-                        return d.properties.boro_cd-StateString[1];
-                        break;
-                    default:
-                        return "bearsNstuff";
-                }
-            }
-    
     function TooltipTextNY(d,name,pop,life,inc,crime){
         tooltip.html(
                         "<center><b>"+d.properties[name]+" District "
@@ -292,23 +267,36 @@ d3.json("ChicagoData.json", function(error, json) {
     //initial shading of the map.
     ColorScheme(Cdatum,svg2,pop_colors,"population");
 });
-//Draw the buttons
+//Draw the buttons & set slider div
 document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
 document.write('<button align="left" id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div></div>');
+document.write('<div id="slider-left-value"></div><div id="slider-right-value"></div>');
 
+//Slider var;create element;On slide, change colors.
 var slider = document.getElementById('slider');
+var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
 noUiSlider.create(slider, {
-    start: [51000,51000],
-    tooltips:[true,true],
+    start: [0,0],
+    tooltips:[false,false],
     behaviour: 'drag-tap',
 	connect: true,
 	range: {
-	'min': 51000,
-	'max': 247354
+	'min': 0,
+	'max': 42
     }
-        });
+});
+slider.noUiSlider.on('update', function(values,handle){
+    sliderValues[handle].innerHTML=values[handle];
+    Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
+});
+
+//Gets the legend started. Hidden
+AppendLegend(pop_colors,pop,popText,"poplegend",0);
+AppendLegend(life_colors,life,lifeText,"lifelegend",0);
+AppendLegend(income_colors,income,incomeText,"incomelegend",0);
+AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 //button functions
 function Population() {
@@ -344,13 +332,8 @@ function Crime() {
     UpdateSlider(crimeRange);
 }
 
-//Gets the legend started. Hidden
-AppendLegend(pop_colors,pop,popText,"poplegend",0);
-AppendLegend(life_colors,life,lifeText,"lifelegend",0);
-AppendLegend(income_colors,income,incomeText,"incomelegend",0);
-AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
+/*-----Helper Functions------*/
 
-//-----Helper Functions------//
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
     var data = d.objects.features.geometries;
@@ -370,11 +353,7 @@ function UpdateSlider(rangeVals){
     
 }
 
-slider.noUiSlider.on('slide', function(){
-    SlideTracker(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
-});
-
-function SlideTracker(NYdata,CData,NYmap,Cmap,color,property,setVals){
+function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
      NYmap.selectAll("path")
     .data(NYdata.features)
     .transition().duration(1000)
@@ -459,7 +438,29 @@ function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
         .transition(1000)
         .style("opacity",crimeOpac);
 }
-
+//NY-remove the hundreth digit from the Districts.
+function bDistrict(d){
+    var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
+    switch(d.properties.boro_name){
+        case ManString[0]:
+            return d.properties.boro_cd-ManString[1];
+            break;
+        case BronxString[0]:
+            return d.properties.boro_cd-BronxString[1];
+            break;
+        case BrookString[0]:
+            return d.properties.boro_cd-BrookString[1];
+            break;
+        case qString[0]:
+            return d.properties.boro_cd-qString[1];
+            break;
+        case StateString[0]:
+            return d.properties.boro_cd-StateString[1];
+            break;
+        default:
+            return "bearsNstuff";
+    }
+}
 function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
