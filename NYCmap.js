@@ -47,7 +47,7 @@ var tip = d3.tip()
   .attr('class', 'd3-tip')
   .offset([-10, 0])
   .html(function(d) {
-    return "<strong>Frequency:</strong> <span style='color:red'>" + d.properties.population + "</span>";
+     return tipText(d);
   });
 svg.call(tip);
 
@@ -100,7 +100,6 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    //HoverHighlight(this,select);
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{ //d3.select(this).style("fill","yellow");
                        tooltip.html(
@@ -114,12 +113,7 @@ d3.json("NYData.json", function(error, json) {
         .on("mousemove", function(d){
             return tip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
         })
-        .on("mouseout", function(d){
-            tooltip.transition()
-            .duration(500)
-            .style("opacity", 0);
-            //HoverHighlight(this,select);
-        })
+        .on("mouseout", tip.hide);
         //New York City Label
     svg.append("text")
     .attr("x",70)
@@ -223,7 +217,6 @@ d3.json("ChicagoData.json", function(error, json) {
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
             tooltip.style("height","100px").style("width","175px");
-            //HoverHighlight(this,select);
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
             tooltip.style("height","143px").style("width","175px");
@@ -238,17 +231,11 @@ d3.json("ChicagoData.json", function(error, json) {
             );
         }
     })
-    .on("mousemove", function(d){
+    .on("mousemove", function(){
         //update tooltip position
-        return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
+        tip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
-    .on("mouseout", function(d){
-        //HoverHighlight(this,select);
-        //fade tooltip over .5s
-        tooltip.transition()
-        .duration(500)
-        .style("opacity", 0);
-    })
+    .on("mouseout", tip.hide);
     //Chicago Label
     svg2.append("text")
     .attr("x",100)
@@ -447,4 +434,9 @@ function TooltipTextC(d,name,pop,life,inc,crime){
 function HoverHighlight(d,select){
     d3.select(d).style("fill",function(d){
             return select_colors(d.properties[select])});
+}
+
+function tipText(data){
+    if(select==tipDetail.population) return "hello"; else
+    return "<strong>Frequency:</strong> <span style='color:red'>" + data.properties.population + "</span>";
 }
