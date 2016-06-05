@@ -19,9 +19,9 @@ var income = colorbrewer.Greens[6];
 var crime = colorbrewer.Reds[8];
 
 //add for legend scale text reference
-var popText = ["40000+", 80000, 120000, 160000, 200000, 220000];
-var lifeText = [60, 70, 80, 90, 100];
-var incomeText = [5000, 15000, 40000, 80000, 100000];
+var popText = ["0-40K", "40K-80K", "80K-120K", "120K-160K","160K-200K","200K+"];
+var lifeText = ["0-60", "60-70", "70-80", "80-90", "90-100"];
+var incomeText = ["$0-$5000", "$5000-15k", "$15k-$40k", "$40k-$80k", "$80k-$100k"];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
@@ -63,6 +63,7 @@ d3.json("NYData.json", function(error, json) {
     if (error) return console.error(error);
     
     var features = topojson.feature(json,json.objects.features);
+    
     //copy to global variable
     NYdatum = features;
     
@@ -87,7 +88,7 @@ d3.json("NYData.json", function(error, json) {
         .attr("d", path)
         .on("mouseover", function(d){
             //fit the tooltip to the information shown
-            tooltip.style("height","95px").style("width","175px");
+            tooltip.style("height","100px").style("width","175px");
             tooltip.transition()
             .duration(200)
             .style("opacity", .9);
@@ -100,28 +101,112 @@ d3.json("NYData.json", function(error, json) {
             //if showing general information:
             if(!DetailedTooltip) {
                 TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-            } else{d3.select(this).style("fill","yellow"); //else show details on topic.
-                tooltip.html(
-                        "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
+            } else{ //else show details on topic.
+                        //put these under the income button
+                  switch(select){
+                      case tipDetail.income:
+                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
+                        +"Employed: "+d.properties.employed+"%"+"<br/>"
+                        +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
+                        +"Service occupations: "+d.properties.service+"%"+"<br/>"
+                        +"Sales and office occupations: "+d.properties.sales+"%"+"<br/>"
+                        +"Natural resources, construction, and maintenance occupations: "+d.properties.natural+"%"+"<br/>"
+                        +"Production, transportation, and material moving occupations: "+d.properties.production+"%"+"<br/>");
+                        break;
+                        //put these under the population button
+                      case tipDetail.population:  
+                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        +"Male Population: "+d.properties.male+"%"+"<br/>"
+                        +"Female Population: "+d.properties.female+"%"+"<br/>"
+                        +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
+                        +"African American: "+d.properties.aa+"%"+"<br/>"
+                        +"American Indian: "+d.properties.ai+"%"+"<br/>"
+                        +"Asian: "+d.properties.asian+"%"+"<br/>"
+                        +"Hawaiian: "+d.properties.hawaiian+"%"+"<br/>"
+                        +"Other: "+d.properties.other+"%"+"<br/>");
+                        break;
+                        //put these under the life button
+                        case tipDetail.lifeExpectancy:
+                          tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
+                        +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
+                        +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
+                        break;
+                        //put these under the crime button
+                        case tipDetail.crime:
+                         tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
+                        +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
+                        +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
+                        +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
+                        +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
+                        +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
+                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
                         +"Detailed Info");
+                        break;
+                  }
             }
-
+            //tooltip is initially hidden, activates when mouse first goes over map.
             return tooltip.style("display","inline");
         })
         .on("click", function(d){
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
-                    HoverHighlight(this,select);
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-                } else{ d3.select(this).style("fill","yellow");
+                } else{
                        tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
+                        + bDistrict(d));
+                        //put these under the income button
+                  switch(select){
+                      case tipDetail.income:
+                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
+                        +"Employed: "+d.properties.employed+"%"+"<br/>"
+                        +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
+                        +"Service occupations: "+d.properties.service+"%"+"<br/>"
+                        +"Sales and office occupations: "+d.properties.sales+"%"+"<br/>"
+                        +"Natural resources, construction, and maintenance occupations: "+d.properties.natural+"%"+"<br/>"
+                        +"Production, transportation, and material moving occupations: "+d.properties.production+"%"+"<br/>");
+                        break;
+                        //put these under the population button
+                      case tipDetail.population:  
+                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        +"Male Population: "+d.properties.male+"%"+"<br/>"
+                        +"Female Population: "+d.properties.female+"%"+"<br/>"
+                        +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
+                        +"African American: "+d.properties.aa+"%"+"<br/>"
+                        +"American Indian: "+d.properties.ai+"%"+"<br/>"
+                        +"Asian: "+d.properties.asian+"%"+"<br/>"
+                        +"Hawaiian: "+d.properties.hawaiian+"%"+"<br/>"
+                        +"Other: "+d.properties.other+"%"+"<br/>");
+                        break;
+                        //put these under the life button
+                        case tipDetail.lifeExpectancy:
+                          tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
+                        +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
+                        +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
+                        break;
+                        //put these under the crime button
+                        case tipDetail.crime:
+                         tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
+                        +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
+                        +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
+                        +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
+                        +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
+                        +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
+                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
                         +"Detailed Info");
+                        break;
+                  }
                 }
             }
         })
@@ -132,8 +217,6 @@ d3.json("NYData.json", function(error, json) {
             tooltip.transition()
             .duration(500)
             .style("opacity", 0);
-        
-            HoverHighlight(this,select);
         })
         //New York City Label
     svg.append("text")
@@ -146,32 +229,6 @@ d3.json("NYData.json", function(error, json) {
     .delay(500)
     .style("opacity",1);
     
-    Population();
-    //Helper functions (Only for NY)
-    //NY-remove the hundreth digit from the Districts.
-    function bDistrict(d){
-                var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
-                switch(d.properties.boro_name){
-                    case ManString[0]:
-                        return d.properties.boro_cd-ManString[1];
-                        break;
-                    case BronxString[0]:
-                        return d.properties.boro_cd-BronxString[1];
-                        break;
-                    case BrookString[0]:
-                        return d.properties.boro_cd-BrookString[1];
-                        break;
-                    case qString[0]:
-                        return d.properties.boro_cd-qString[1];
-                        break;
-                    case StateString[0]:
-                        return d.properties.boro_cd-StateString[1];
-                        break;
-                    default:
-                        return "bearsNstuff";
-                }
-            }
-    
     function TooltipTextNY(d,name,pop,life,inc,crime){
         tooltip.html(
                         "<center><b>"+d.properties[name]+" District "
@@ -180,8 +237,16 @@ d3.json("NYData.json", function(error, json) {
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
                         +"Income per Capita: "+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]);
+                        +"Crime: "+d.properties[crime]+"<br/>"
+                        +'<div id="help">Click For Details<div>'
+        );
     }
+    //Gets the map coloring started @ Population
+    select=tipDetail.population;
+    select_colors=pop_colors;
+    ColorScheme(NYdatum,svg,pop_colors,"population");  
+    ShowLegendPLIC(1,0,0,0);
+    UpdateSlider([2500,250000]);
 });
 
 //SVG for Chicago
@@ -208,7 +273,7 @@ d3.json("ChicagoData.json", function(error, json) {
     
     //copy features to global
     Cdatum = features;
-    
+
     //allows view of the map (Otherwise it'll be drawn off-screen)
     var projection = d3.geo.albers()
                     .center([8.25, 41.88205])
@@ -225,41 +290,68 @@ d3.json("ChicagoData.json", function(error, json) {
     .attr("class", "Cfeatures")
     .attr("d", path)
     .on("mouseover", function(d){
-        tooltip.style("height","100px").style("width","175px");
         tooltip.transition()
         .duration(200)
         .style("opacity", .9);
         //change what's inside the tooltip
         if(!DetailedTooltip){
-        TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
+            tooltip.style("height","100px").style("width","175px");
+            TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
-            d3.select(this).style("fill", "yellow");
-            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Below poverty: "+d.properties.percentbelowpoverty
-                +"%<br>16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>Detailed Info");
-               }
-        //tooltip is initially hidden, so it won't show a weird space at the bottom of html.
+            switch(select){
+                case tipDetail.population:
+                    tooltip.style("height", "118px").style("width", "180px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Population: " + d.properties.population + "<br/>" + "Crowded Housing: " + d.properties.percentcrowdedhousing + "<br/>" + "Age 25+ and no HS Diploma: " + d.properties.percent25plusnoHSD + "<br/>" + "Teen Birth Rate: " + d.properties.teenBirthRate );
+                    break;
+                case tipDetail.lifeExpectancy:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
+                    break;
+                case tipDetail.income:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    break;
+                case tipDetail.crime:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Crime Per K: " + d.properties.crimePerK + "<br/>" + "Violent Crimes: " + d.properties.violentCrimes + "<br/>" + "Homicide Assaults: " + d.properties.homocideAssault + "<br/>" + "Fire-Arm Related Crimes: " + d.properties.firearmRelated);
+                    break;
+            }
+        }
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
     })
     .on("click", function(d){
+        console.log(d);
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
-            HoverHighlight(this,select);
+            tooltip.style("height","100px").style("width","175px");
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
-            d3.select(this).style("fill","yellow");
-            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                    +"Percent Below Poverty: "+ d.properties.percentbelowpoverty)
-                    +"Detailed tooltip";
+            switch(select){
+                case tipDetail.population:
+                    tooltip.style("height", "118px").style("width", "180px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Population: " + d.properties.population + "<br/>" + "Crowded Housing: " + d.properties.percentcrowdedhousing + "<br/>" + "Age 25+ and no HS Diploma: " + d.properties.percent25plusnoHSD + "<br/>" + "Teen Birth Rate: " + d.properties.teenBirthRate );
+                    break;
+                case tipDetail.lifeExpectancy:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
+                    break;
+                case tipDetail.income:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    break;
+                case tipDetail.crime:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Crime Per K: " + d.properties.crimePerK + "<br/>" + "Violent Crimes: " + d.properties.violentCrimes + "<br/>" + "Homicide Assaults: " + d.properties.homocideAssault + "<br/>" + "Fire-Arm Related Crimes: " + d.properties.firearmRelated);
+                    break;
             }
+        }
     })
     .on("mousemove", function(d){
         //update tooltip position
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
     })
     .on("mouseout", function(d){
-        HoverHighlight(this,select);
         //fade tooltip over .5s
         tooltip.transition()
         .duration(500)
@@ -275,29 +367,47 @@ d3.json("ChicagoData.json", function(error, json) {
     .transition(2000)
     .delay(500)
     .style("opacity",1);
-    Population();
+    
+    //initial shading of the map.
+    ColorScheme(Cdatum,svg2,pop_colors,"population");
 });
-//Draw the buttons
-document.write('<br><div align="left" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button>');
-document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button>');
-document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button>');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider"></div></div>');
+//Draw the buttons & set slider div
+document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
+document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
+document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div>');
+document.write('<div align="center" id="slider-left-value"></div><div id="slider-right-value"></div></div>');
 
+//Slider var;create element;On slide, change colors.
 var slider = document.getElementById('slider');
+var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
 noUiSlider.create(slider, {
-    start: [51000,51000],
-    tooltips:[true,true],
+    start: [0,0],
+    tooltips:[false,false],
     behaviour: 'drag-tap',
 	connect: true,
 	range: {
-	'min': 51000,
-	'max': 247354
+	'min': 0,
+	'max': 42
     }
-        });
+});
+
+sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
+sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
+
+slider.noUiSlider.on('slide', function(values,handle){
+    sliderValues[handle].innerHTML=values[handle];
+    Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
+});
+
+//Gets the legend started. Hidden
+AppendLegend(pop_colors,pop,popText,"poplegend",0);
+AppendLegend(life_colors,life,lifeText,"lifelegend",0);
+AppendLegend(income_colors,income,incomeText,"incomelegend",0);
+AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 //button functions
 function Population() {
-    tooltip.style("background","rgba(176, 196, 222,0.94)");
     select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
@@ -306,7 +416,6 @@ function Population() {
     UpdateSlider([2500,250000]);
 }
 function Life() {
-    tooltip.style("background","rgba(248, 161, 41, 0.94)");
     select=tipDetail.lifeExpectancy;
     select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
@@ -315,7 +424,6 @@ function Life() {
     UpdateSlider(lifeRange);
 }
 function Income() {
-    tooltip.style("background","rgba(114, 212, 141,0.94)");
     select=tipDetail.income;
     select_colors=income_colors;
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
@@ -324,7 +432,6 @@ function Income() {
     UpdateSlider(incomeRange);
 }
 function Crime() {
-    tooltip.style("background","rgba(242, 145, 132,0.94)");
     select=tipDetail.crime;
     select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
@@ -333,32 +440,29 @@ function Crime() {
     UpdateSlider(crimeRange);
 }
 
-//-----Helper Functions------//
+/*-----Helper Functions------*/
+
 //returns a [min,max] array of argument. Target is in json Properties.
 function minMax(toGet,d){
-                data = d.objects.features.geometries;
+    var data = d.objects.features.geometries;
     return [d3.min(data, function(i){return i.properties[toGet];}),d3.max(data, function(i){return i.properties[toGet];})];
 }
 
 function UpdateSlider(rangeVals){
     slider.noUiSlider.updateOptions({
         range:{
-            'min':(rangeVals[0]-5),
+            'min':(rangeVals[0]-2),
             'max':(rangeVals[1]+5)
         }
         
     });
-    slider.noUiSlider.set([rangeVals[0]-5, rangeVals[0]]); 
-    
+    slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]-1]); 
+    sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
+    sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
     
 }
 
-slider.noUiSlider.on('slide', function(){
-    SlideTracker(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
-});
-
-function SlideTracker(NYdata,CData,NYmap,Cmap,color,property,setVals){
-    console.log(setVals);
+function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
      NYmap.selectAll("path")
     .data(NYdata.features)
     .transition().duration(1000)
@@ -395,25 +499,20 @@ function ColorScheme(data,map,color,property){
       else return "white"});  
 }
 
-AppendLegend(pop_colors,pop,popText,"poplegend",0);
-AppendLegend(life_colors,life,lifeText,"lifelegend",0);
-AppendLegend(income_colors,income,incomeText,"incomelegend",0);
-AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
-
 function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
-    var xPos=450;
+    var legendHeight=600;
     parentSVG.selectAll(".legend")
         .data(cScale.domain(),function(d){return d;})
         .enter()
         .append("g")
         .attr("class", cssClass)
         .attr("opacity",opacity)
-        .append("rect")
+        .append("rect")//55*i
         //sets the location and width of each colored rectangles and adds the iteratively
-        .attr("x", function(d,i){ return xPos + (55 * i);})
-        .attr("y", height-70)
-        .attr("width", 55)
-        .attr("height", 15)
+        .attr("x", 600)
+        .attr("y", function(d,i){return height-175-(55*i)})
+        .attr("width", 15)
+        .attr("height", 55)
         .attr("fill", function(d, i){ return brewSet[i];})
         .style("stroke", "rgba(105, 105, 105, 0.86)")
         .style("stroke-width", "2px")
@@ -422,8 +521,8 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
     parentSVG.selectAll("g."+cssClass)
         .append("text")
         .attr("class", cssClass)
-        .attr("x", function(d,i){ return xPos+5+ (55 * i);})
-        .attr("y", height-45)
+        .attr("x", function(d){ return 600+25})
+        .attr("y", function(d,i){return height-140-(55*i)})
         .attr("width", 200)
         .attr("height", 15)
         .style("opacity",opacity)
@@ -448,13 +547,36 @@ function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
         .transition(1000)
         .style("opacity",crimeOpac);
 }
-
+//NY-remove the hundredth digit from the Districts.
+function bDistrict(d){
+    var ManString=["Manhattan",100],BronxString=["Bronx",200],BrookString=["Brooklyn",300],qString=["Queens",400],StateString=["Staten Island",500];
+    switch(d.properties.boro_name){
+        case ManString[0]:
+            return d.properties.boro_cd-ManString[1];
+            break;
+        case BronxString[0]:
+            return d.properties.boro_cd-BronxString[1];
+            break;
+        case BrookString[0]:
+            return d.properties.boro_cd-BrookString[1];
+            break;
+        case qString[0]:
+            return d.properties.boro_cd-qString[1];
+            break;
+        case StateString[0]:
+            return d.properties.boro_cd-StateString[1];
+            break;
+        default:
+            return "bearsNstuff";
+    }
+}
 function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
                         +"Income Per Capita: "+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
+                        +'<div id="help">Click For Details<div>'
                         );
 }
 
