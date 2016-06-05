@@ -211,15 +211,24 @@ d3.json("ChicagoData.json", function(error, json) {
             tooltip.style("height","100px").style("width","175px");
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
-            tooltip.style("height","143px").style("width","175px");
-            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
-                +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
-                +"Below poverty: "+d.properties.percentbelowpoverty+"%<br>"
-                +"16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>"
-                +"Violent crimes: "+d.properties.violentCrimes+"%<br>"
-                +"Harship Index: "+d.properties.hardshipIndex+"<br>"
-            );
+            switch(select){
+                case tipDetail.population:
+                    tooltip.style("height", "118px").style("width", "180px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Population: " + d.properties.population + "<br/>" + "Crowded Housing: " + d.properties.percentcrowdedhousing + "<br/>" + "Age 25+ and no HS Diploma: " + d.properties.percent25plusnoHSD + "<br/>" + "Teen Birth Rate: " + d.properties.teenBirthRate );
+                    break;
+                case tipDetail.lifeExpectancy:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
+                    break;
+                case tipDetail.income:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    break;
+                case tipDetail.crime:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Crime Per K: " + d.properties.crimePerK + "<br/>" + "Violent Crimes: " + d.properties.violentCrimes + "<br/>" + "Homicide Assaults: " + d.properties.homocideAssault + "<br/>" + "Fire-Arm Related Crimes: " + d.properties.firearmRelated);
+                    break;
+            }
         }
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
@@ -231,16 +240,24 @@ d3.json("ChicagoData.json", function(error, json) {
             tooltip.style("height","100px").style("width","175px");
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else{
-            tooltip.style("height","143px").style("width","175px");
-            //d3.select(this).style("fill","yellow");
-            tooltip.html("<center><b>"+d.properties.comName+"</b></center><br/>"
-                +"Crowded Housing: "+d.properties.percentcrowdedhousing+"%<br>"
-                +"Age 25+ no HS Diploma: "+d.properties.percent25plusnoHSD+"%<br>"
-                +"Below poverty: "+d.properties.percentbelowpoverty+"%<br>"
-                +"16+ Unemployed: "+d.properties.percent16plusunemployed+"%<br>"
-                +"Violent crimes: "+d.properties.violentCrimes+"<br>"
-                +"Harship Index: "+d.properties.hardshipIndex+"<br>"
-            );
+            switch(select){
+                case tipDetail.population:
+                    tooltip.style("height", "118px").style("width", "180px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Population: " + d.properties.population + "<br/>" + "Crowded Housing: " + d.properties.percentcrowdedhousing + "<br/>" + "Age 25+ and no HS Diploma: " + d.properties.percent25plusnoHSD + "<br/>" + "Teen Birth Rate: " + d.properties.teenBirthRate );
+                    break;
+                case tipDetail.lifeExpectancy:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
+                    break;
+                case tipDetail.income:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    break;
+                case tipDetail.crime:
+                    tooltip.style("height", "118px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Crime Per K: " + d.properties.crimePerK + "<br/>" + "Violent Crimes: " + d.properties.violentCrimes + "<br/>" + "Homicide Assaults: " + d.properties.homocideAssault + "<br/>" + "Fire-Arm Related Crimes: " + d.properties.firearmRelated);
+                    break;
+            }
         }
     })
     .on("mousemove", function(d){
@@ -350,7 +367,7 @@ function UpdateSlider(rangeVals){
         }
         
     });
-    slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]]); 
+    slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]-1]); 
     sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
     sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
     
