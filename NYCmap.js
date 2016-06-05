@@ -20,8 +20,8 @@ var crime = colorbrewer.Reds[8];
 
 //add for legend scale text reference
 var popText = ["0-40K", "40K-80K", "80K-120K", "120K-160K","160K-200K","200K+"];
-var lifeText = [60, 70, 80, 90, 100];
-var incomeText = [5000, 15000, 40000, 80000, 100000];
+var lifeText = ["0-60", "60-70", "70-80", "80-90", "90-100"];
+var incomeText = ["$0-$5000", "$5000-15k", "$15k-$40k", "$40k-$80k", "$80k-$100k"];
 var crimeText = [0, 10, 20, 30, 40, 50, 60];
 
 //Detailed Tooltip Selections
@@ -288,8 +288,8 @@ d3.json("ChicagoData.json", function(error, json) {
 document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
-document.write('<button align="left" id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div></div>');
-document.write('<div id="slider-left-value"></div><div id="slider-right-value"></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div>');
+document.write('<div align="center" id="slider-left-value"></div><div id="slider-right-value"></div></div>');
 
 //Slider var;create element;On slide, change colors.
 var slider = document.getElementById('slider');

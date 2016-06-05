@@ -27,14 +27,26 @@ div#slider{
     width:400px;
 }
 div#slider-left-value{
-    position: relative;
-    right:245px;
-    top:24px;
+    background:white;
+    border: solid 1px #d3d3d3;
+    border-radius: 4px;
+    font-weight: bold;
+    width:80px;
+    position:relative;
+    right:260px;
+    top:22px;
+    color:black;
 }
 div#slider-right-value{
+    background:white;
+    border: solid 1px #d3d3d3;
+    border-radius: 4px;
+    font-weight: bold;
+    color:black;
+    width:80px;
     position: relative;
-    top:5px;
-    left:255px
+    top:2px;
+    left:260px;
 }
 .Cfeatures{
     fill: white;
