@@ -88,7 +88,7 @@ d3.json("NYData.json", function(error, json) {
         .attr("d", path)
         .on("mouseover", function(d){
             //fit the tooltip to the information shown
-            tooltip.style("height","95px").style("width","175px");
+            tooltip.style("height","100px").style("width","175px");
             tooltip.transition()
             .duration(200)
             .style("opacity", .9);
@@ -101,12 +101,53 @@ d3.json("NYData.json", function(error, json) {
             //if showing general information:
             if(!DetailedTooltip) {
                 TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-            } else{//d3.select(this).style("fill","yellow"); //else show details on topic.
-                tooltip.html(
-                        "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
+            } else{ //else show details on topic.
+                        //put these under the income button
+                  switch(select){
+                      case tipDetail.income:
+                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
+                        +"Employed: "+d.properties.employed+"%"+"<br/>"
+                        +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
+                        +"Service occupations: "+d.properties.service+"%"+"<br/>"
+                        +"Sales and office occupations: "+d.properties.sales+"%"+"<br/>"
+                        +"Natural resources, construction, and maintenance occupations: "+d.properties.natural+"%"+"<br/>"
+                        +"Production, transportation, and material moving occupations: "+d.properties.production+"%"+"<br/>");
+                        break;
+                        //put these under the population button
+                      case tipDetail.population:  
+                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        +"Male Population: "+d.properties.male+"%"+"<br/>"
+                        +"Female Population: "+d.properties.female+"%"+"<br/>"
+                        +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
+                        +"African American: "+d.properties.aa+"%"+"<br/>"
+                        +"American Indian: "+d.properties.ai+"%"+"<br/>"
+                        +"Asian: "+d.properties.asian+"%"+"<br/>"
+                        +"Hawaiian: "+d.properties.hawaiian+"%"+"<br/>"
+                        +"Other: "+d.properties.other+"%"+"<br/>");
+                        break;
+                        //put these under the life button
+                        case tipDetail.lifeExpectancy:
+                          tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
+                        +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
+                        +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
+                        break;
+                        //put these under the crime button
+                        case tipDetail.crime:
+                         tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
+                        +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
+                        +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
+                        +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
+                        +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
+                        +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
+                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
                         +"Detailed Info");
+                        break;
+                  }
             }
             //tooltip is initially hidden, activates when mouse first goes over map.
             return tooltip.style("display","inline");
@@ -116,12 +157,56 @@ d3.json("NYData.json", function(error, json) {
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
-                } else{ //d3.select(this).style("fill","yellow");
+                } else{
                        tooltip.html(
                         "<center><b>"+d.properties.boro_name+" District "
-                        + bDistrict(d)
-                        +"</b></center><br/>"
+                        + bDistrict(d));
+                        //put these under the income button
+                  switch(select){
+                      case tipDetail.income:
+                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
+                        +"Employed: "+d.properties.employed+"%"+"<br/>"
+                        +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
+                        +"Service occupations: "+d.properties.service+"%"+"<br/>"
+                        +"Sales and office occupations: "+d.properties.sales+"%"+"<br/>"
+                        +"Natural resources, construction, and maintenance occupations: "+d.properties.natural+"%"+"<br/>"
+                        +"Production, transportation, and material moving occupations: "+d.properties.production+"%"+"<br/>");
+                        break;
+                        //put these under the population button
+                      case tipDetail.population:  
+                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        +"Male Population: "+d.properties.male+"%"+"<br/>"
+                        +"Female Population: "+d.properties.female+"%"+"<br/>"
+                        +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
+                        +"African American: "+d.properties.aa+"%"+"<br/>"
+                        +"American Indian: "+d.properties.ai+"%"+"<br/>"
+                        +"Asian: "+d.properties.asian+"%"+"<br/>"
+                        +"Hawaiian: "+d.properties.hawaiian+"%"+"<br/>"
+                        +"Other: "+d.properties.other+"%"+"<br/>");
+                        break;
+                        //put these under the life button
+                        case tipDetail.lifeExpectancy:
+                          tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
+                        +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
+                        +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
+                        break;
+                        //put these under the crime button
+                        case tipDetail.crime:
+                         tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
+                        +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
+                        +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
+                        +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
+                        +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
+                        +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
+                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
                         +"Detailed Info");
+                        break;
+                  }
                 }
             }
         })
@@ -152,7 +237,9 @@ d3.json("NYData.json", function(error, json) {
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
                         +"Income per Capita: "+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]);
+                        +"Crime: "+d.properties[crime]+"<br/>"
+                        +'<div id="help">Click For Details<div>'
+        );
     }
     //Gets the map coloring started @ Population
     select=tipDetail.population;
@@ -304,8 +391,10 @@ noUiSlider.create(slider, {
 	'max': 42
     }
 });
+
 sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
 sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
+
 slider.noUiSlider.on('slide', function(values,handle){
     sliderValues[handle].innerHTML=values[handle];
     Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
@@ -487,6 +576,7 @@ function TooltipTextC(d,name,pop,life,inc,crime){
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
                         +"Income Per Capita: "+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
+                        +'<div id="help">Click For Details<div>'
                         );
 }
 
