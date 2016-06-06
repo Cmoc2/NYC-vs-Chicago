@@ -105,7 +105,7 @@ d3.json("NYData.json", function(error, json) {
                         //put these under the income button
                   switch(select){
                       case tipDetail.income:
-                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.style("height", "290px").style("width", "185px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
                         +"Employed: "+d.properties.employed+"%"+"<br/>"
                         +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
@@ -116,7 +116,7 @@ d3.json("NYData.json", function(error, json) {
                         break;
                         //put these under the population button
                       case tipDetail.population:  
-                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.style("height", "175px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"<br/>"
                         +"Male Population: "+d.properties.male+"%"+"<br/>"
                         +"Female Population: "+d.properties.female+"%"+"<br/>"
@@ -129,23 +129,23 @@ d3.json("NYData.json", function(error, json) {
                         break;
                         //put these under the life button
                         case tipDetail.lifeExpectancy:
-                          tooltip.style("height", "143px").style("width", "180px");
+                          tooltip.style("height", "130px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
                         +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
                         +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
                         break;
                         //put these under the crime button
                         case tipDetail.crime:
-                         tooltip.style("height", "180px").style("width", "180px");
+                         tooltip.style("height", "260px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
                         +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
                         +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
                         +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
                         +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
                         +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
-                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        //+"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
                         +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
-                        +"Detailed Info");
+                        );
                         break;
                   }
             }
@@ -156,6 +156,7 @@ d3.json("NYData.json", function(error, json) {
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
+                    tooltip.style("height","100px").style("width","175px")
                     TooltipTextNY(d,"boro_name","population","lifeExpectancy","incomePerCapita","crimePerK");
                 } else{
                        tooltip.html(
@@ -164,7 +165,7 @@ d3.json("NYData.json", function(error, json) {
                         //put these under the income button
                   switch(select){
                       case tipDetail.income:
-                        tooltip.style("height", "180px").style("width", "180px");
+                        tooltip.style("height", "290px").style("width", "185px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Income Below Poverty: "+ d.properties.poverty+"%"+"<br/>"
                         +"Employed: "+d.properties.employed+"%"+"<br/>"
                         +"Management, business, science, & arts occupations: "+d.properties.management+"%"+"<br/>"
@@ -175,7 +176,7 @@ d3.json("NYData.json", function(error, json) {
                         break;
                         //put these under the population button
                       case tipDetail.population:  
-                        tooltip.style("height", "143px").style("width", "180px");
+                        tooltip.style("height", "175px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
                         +"Male Population: "+d.properties.male+"%"+"<br/>"
                         +"Female Population: "+d.properties.female+"%"+"<br/>"
@@ -188,23 +189,23 @@ d3.json("NYData.json", function(error, json) {
                         break;
                         //put these under the life button
                         case tipDetail.lifeExpectancy:
-                          tooltip.style("height", "143px").style("width", "180px");
+                          tooltip.style("height", "130px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Life Expectancy: "+d.properties.lifeExpectancy+" years"+"<br/>"
                         +"Premature Mortality Rate: "+d.properties.premature+"<br/>"
                         +"Outdoor Air Pollution in Fine Particulate Matter Levels: "+d.properties.pollution+"<br/>");
                         break;
                         //put these under the crime button
                         case tipDetail.crime:
-                         tooltip.style("height", "180px").style("width", "180px");
+                         tooltip.style("height", "260px").style("width", "180px");
                         tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>"+"Crime Rate per 1000 residents: "+d.properties.crimePerK+"<br/>"
                         +"Murder Rate per 1000 residents: "+d.properties.murder+"<br/>"
                         +"Rape Rate per 1000 residents: "+d.properties.rape+"<br/>"
                         +"Robbery Rate per 1000 residents: "+d.properties.robbery+"<br/>"
                         +"Felony Assault Rate per 1000 residents: "+d.properties.felonyAssault+"<br/>"
                         +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
-                        +"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
+                        //+"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
                         +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
-                        +"Detailed Info");
+                        );
                         break;
                   }
                 }
@@ -236,7 +237,7 @@ d3.json("NYData.json", function(error, json) {
                         +"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income per Capita: "+d.properties[inc]+"<br/>"
+                        +"Income per Capita: $"+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
                         +'<div id="help">Click For Details<div>'
         );
@@ -308,8 +309,8 @@ d3.json("ChicagoData.json", function(error, json) {
                     tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
                     break;
                 case tipDetail.income:
-                    tooltip.style("height", "118px").style("width", "175px");
-                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    tooltip.style("height", "100px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: $" + d.properties.incomePerCapita + "<br/>" + "Below Poverty: " + d.properties.percentbelowpoverty + "%<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "%<br/>" + "Dependents: " + d.properties.dependents);
                     break;
                 case tipDetail.crime:
                     tooltip.style("height", "118px").style("width", "175px");
@@ -337,8 +338,8 @@ d3.json("ChicagoData.json", function(error, json) {
                     tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Life Expectancy: " + d.properties.lifeExpectancy + "<br/>" + "Hardship Index: " + d.properties.hardshipIndex + "<br/>" + "Elevated blood lead levels in children ages 0-6: " + d.properties.pElevatedBlood0_6 + "<br/>" + "Birth Rate: " + d.properties.birthRate);
                     break;
                 case tipDetail.income:
-                    tooltip.style("height", "118px").style("width", "175px");
-                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: " + d.properties.incomePerCapita + "<br/>" + "Percent Below Poverty: " + d.properties.percentbelowpoverty + "<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "<br/>" + "Dependents: " + d.properties.dependents);
+                    tooltip.style("height", "100px").style("width", "175px");
+                    tooltip.html("<center><b>" + d.properties.comName + "</center></b><br/>" + "Income Per Capita: $" + d.properties.incomePerCapita + "<br/>" + "Below Poverty: " + d.properties.percentbelowpoverty + "%<br/>" + "16+ Unemployed: " + d.properties.percent16plusunemployed + "%<br/>" + "Dependents: " + d.properties.dependents);
                     break;
                 case tipDetail.crime:
                     tooltip.style("height", "118px").style("width", "175px");
@@ -574,7 +575,7 @@ function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
                         +"Population: "+d.properties[pop]+"<br/>"
                         +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income Per Capita: "+d.properties[inc]+"<br/>"
+                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
                         +'<div id="help">Click For Details<div>'
                         );

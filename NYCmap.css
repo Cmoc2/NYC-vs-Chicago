@@ -2,6 +2,28 @@ body{
     background: #F7F7EB;
 }
 
+.Cfeatures{
+    fill: #B3DDF2;
+    stroke: #777;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+#chicagoLabel{
+    font: 35px sans-serif;
+    fill: rgba(128, 128, 128, 0.86);
+}
+
+.NYfeatures{
+    fill: white;
+    stroke: #777;
+    stroke-linejoin: round;
+    stroke-width: 1.5;
+}
+#nyLabel{			
+    font: 35px sans-serif;
+    fill: rgba(128, 128, 128, 0.86);
+}
+
 div.tooltip {	
     position: absolute;			
     text-align: left;			
@@ -13,7 +35,7 @@ div.tooltip {
     color: white;
     border: 5px;		
     border-radius: 8px;			
-    pointer-events: none;	
+    pointer-events: none;
 }
 div#help{
     position: relative;
