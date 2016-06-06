@@ -145,6 +145,7 @@ d3.json("NYData.json", function(error, json) {
                         +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
                         //+"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
                         +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
+                        +'<div id="crime-help">*Per 1000 Residents<div>'
                         );
                         break;
                   }
@@ -205,6 +206,8 @@ d3.json("NYData.json", function(error, json) {
                         +"Burglary Rate per 1000 residents: "+d.properties.burglary+"<br/>"
                         //+"Grand Larceny Rate per 1000 residents: "+d.properties.grandLarceny+"<br/>"
                         +"Grand Larceny Auto Rate per 1000 residents: "+d.properties.grandLarcenyAuto+"<br/>"
+                        +'<div id="crime-help">*Per 1000 Residents<div>'
+
                         );
                         break;
                   }
