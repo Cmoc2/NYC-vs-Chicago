@@ -117,7 +117,7 @@ d3.json("NYData.json", function(error, json) {
                         //put these under the population button
                       case tipDetail.population:  
                         tooltip.style("height", "143px").style("width", "180px");
-                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"<br/>"
                         +"Male Population: "+d.properties.male+"%"+"<br/>"
                         +"Female Population: "+d.properties.female+"%"+"<br/>"
                         +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
