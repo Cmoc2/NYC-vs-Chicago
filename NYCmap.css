@@ -31,7 +31,7 @@ div.tooltip {
     height: 110px;					
     padding: 10px;				
     font: 14px sans-serif;		
-    background: black;
+    background: #7e7e7e;
     color: white;
     border: 5px;		
     border-radius: 8px;			
@@ -51,7 +51,7 @@ div#help{
     text-decoration: underline;
 }
 div#ny-vs-chicago-title{
-    font: 15px Helvetica, Arial, Sans-Serif;
+    font: 17px Sans-Serif;
 	text-align: center;
     color: #222;
     text-shadow: 0px 2px 3px #F7F7EB;
