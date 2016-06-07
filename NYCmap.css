@@ -88,6 +88,16 @@ div#slider-right-value{
     top:2px;
     left:260px;
 }
+div#slider-text{
+    border: solid 0px #d3d3d3;
+    border-radius: 4px;
+    font-weight: bold;
+    color:black;
+    width:150px;
+    position: relative;
+    top:30px;
+    left:0px;
+}
 hideText{
     visibility: hidden;
 }

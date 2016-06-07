@@ -380,12 +380,13 @@ d3.json("ChicagoData.json", function(error, json) {
 document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider-text"></div><div align="left" id="slider"></div>');
 document.write('<div align="center" id="slider-left-value"></div><div id="slider-right-value"></div></div>');
 
 //Slider var;create element;On slide, change colors.
 var slider = document.getElementById('slider');
 var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
+var sliderText = document.getElementById('slider-text');
 noUiSlider.create(slider, {
     start: [0,0],
     tooltips:[false,false],
@@ -394,14 +395,18 @@ noUiSlider.create(slider, {
 	range: {
 	'min': 0,
 	'max': 42
-    }
+    },
+    format: wNumb({
+        decimals: 0,
+        thousand:',',
+        postfix: Postfix()
+    })
 });
 
 sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
 sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
-
 slider.noUiSlider.on('slide', function(values,handle){
-    sliderValues[handle].innerHTML=values[handle];
+    sliderValues[handle].innerHTML=values[handle] +" ";
     Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
 });
 
@@ -454,6 +459,7 @@ function minMax(toGet,d){
 }
 
 function UpdateSlider(rangeVals){
+    if(rangeVals[0]<1)rangeVals[0]=1;
     slider.noUiSlider.updateOptions({
         range:{
             'min':(rangeVals[0]-2),
@@ -464,7 +470,7 @@ function UpdateSlider(rangeVals){
     slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]-1]); 
     sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
     sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
-    
+    sliderText.innerHTML=Postfix();
 }
 
 function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
@@ -588,4 +594,23 @@ function TooltipTextC(d,name,pop,life,inc,crime){
 function HoverHighlight(d,select){
     d3.select(d).style("fill",function(d){
             return select_colors(d.properties[select])});
+}
+
+function Postfix(){
+    switch(select){
+        case tipDetail.population:
+            return 'People';
+            break;
+        case tipDetail.lifeExpectancy:
+            return 'Years';
+            break;
+        case tipDetail.income:
+            return 'US $';
+            break;
+        case tipDetail.crime:
+            return 'Per 1000 Residents';
+            break;
+        default:
+            return "";
+    }
 }
