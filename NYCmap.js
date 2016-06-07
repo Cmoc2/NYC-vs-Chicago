@@ -153,7 +153,7 @@ d3.json("NYData.json", function(error, json) {
             //tooltip is initially hidden, activates when mouse first goes over map.
             return tooltip.style("display","inline");
         })
-        .on("click", function(d){
+        /*.on("click", function(d){
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
@@ -213,7 +213,7 @@ d3.json("NYData.json", function(error, json) {
                   }
                 }
             }
-        })
+        })*/
         .on("mousemove", function(d){
             return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
         })
@@ -325,7 +325,7 @@ d3.json("ChicagoData.json", function(error, json) {
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
     })
-    .on("click", function(d){
+    /*.on("click", function(d){
         console.log(d);
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
@@ -351,7 +351,7 @@ d3.json("ChicagoData.json", function(error, json) {
                     break;
             }
         }
-    })
+    })*/
     .on("mousemove", function(d){
         //update tooltip position
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
