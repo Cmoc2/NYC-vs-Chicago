@@ -2,6 +2,11 @@ body{
     background: #F7F7EB;
 }
 
+em{
+    font-style: normal;
+    float:right;
+}
+
 .Cfeatures{
     fill: #B3DDF2;
     stroke: #777;
@@ -31,7 +36,7 @@ div.tooltip {
     height: 110px;					
     padding: 10px;				
     font: 14px sans-serif;		
-    background: black;
+    background: #7e7e7e;
     color: white;
     border: 5px;		
     border-radius: 8px;			
@@ -45,13 +50,13 @@ div#crime-help{
 }
 div#help{
     position: relative;
-    left: 110px;
+    left: 60px;
     bottom:-3px;
     font-size: 8px;
     text-decoration: underline;
 }
 div#ny-vs-chicago-title{
-    font: 15px Helvetica, Arial, Sans-Serif;
+    font: 17px Sans-Serif;
 	text-align: center;
     color: #222;
     text-shadow: 0px 2px 3px #F7F7EB;
@@ -82,6 +87,19 @@ div#slider-right-value{
     position: relative;
     top:2px;
     left:260px;
+}
+div#slider-text{
+    border: solid 0px #d3d3d3;
+    border-radius: 4px;
+    font-weight: bold;
+    color:black;
+    width:150px;
+    position: relative;
+    top:30px;
+    left:0px;
+}
+hideText{
+    visibility: hidden;
 }
 .Cfeatures{
     fill: white;

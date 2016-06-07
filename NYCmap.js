@@ -88,7 +88,7 @@ d3.json("NYData.json", function(error, json) {
         .attr("d", path)
         .on("mouseover", function(d){
             //fit the tooltip to the information shown
-            tooltip.style("height","100px").style("width","175px");
+            tooltip.style("height","100px").style("width","225px");
             tooltip.transition()
             .duration(200)
             .style("opacity", .9);
@@ -178,7 +178,7 @@ d3.json("NYData.json", function(error, json) {
                         //put these under the population button
                       case tipDetail.population:  
                         tooltip.style("height", "175px").style("width", "180px");
-                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"<br/>"
                         +"Male Population: "+d.properties.male+"%"+"<br/>"
                         +"Female Population: "+d.properties.female+"%"+"<br/>"
                         +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
@@ -238,13 +238,14 @@ d3.json("NYData.json", function(error, json) {
                         "<center><b>"+d.properties[name]+" District "
                         + bDistrict(d)
                         +"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income per Capita: $"+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]+"<br/>"
-                        +'<div id="help">Click For Details<div>'
+                        +"Population <hideText>___di__</hideText>: <em>"+d.properties[pop]+" people"+"</em><br/>"
+                        +"Life Expectancy<hideText> L ii</hideText>: <em>"+d.properties[life]+" years</em>"+"<br/>"
+                        +"Income Per Capita<hideText> </hideText>: <em>$"+d.properties[inc]+"</em><br/>"
+                        +"Crime<hideText>__________ </hideText>: <em>"+d.properties[crime]+"</em><br/>"
+                        +'<div id="help">*Crime Rate Per 1000 Residents<div>'
         );
     }
+    
     //Gets the map coloring started @ Population
     select=tipDetail.population;
     select_colors=pop_colors;
@@ -299,7 +300,7 @@ d3.json("ChicagoData.json", function(error, json) {
         .style("opacity", .9);
         //change what's inside the tooltip
         if(!DetailedTooltip){
-            tooltip.style("height","100px").style("width","175px");
+            tooltip.style("height","100px").style("width","220px");
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
             switch(select){
@@ -379,12 +380,13 @@ d3.json("ChicagoData.json", function(error, json) {
 document.write('<br><div align="center" id="buttonOptions"><button id="Population" class="PopButton" onclick="Population();">Population</button> ');
 document.write('<button id="lifeExpectancy" class="LifeButton" onclick="Life();">Life Expectancy</button> ');
 document.write('<button id="income" class="IncomeButton" onclick="Income();">Income</button> ');
-document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div align="left" id="slider"></div>');
+document.write('<button id="Crime" class="CrimeButton" onclick="Crime();">Crime</button><div id="slider-text"></div><div align="left" id="slider"></div>');
 document.write('<div align="center" id="slider-left-value"></div><div id="slider-right-value"></div></div>');
 
 //Slider var;create element;On slide, change colors.
 var slider = document.getElementById('slider');
 var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
+var sliderText = document.getElementById('slider-text');
 noUiSlider.create(slider, {
     start: [0,0],
     tooltips:[false,false],
@@ -393,14 +395,18 @@ noUiSlider.create(slider, {
 	range: {
 	'min': 0,
 	'max': 42
-    }
+    },
+    format: wNumb({
+        decimals: 0,
+        thousand:',',
+        postfix: Postfix()
+    })
 });
 
 sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
 sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
-
 slider.noUiSlider.on('slide', function(values,handle){
-    sliderValues[handle].innerHTML=values[handle];
+    sliderValues[handle].innerHTML=values[handle] +" ";
     Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
 });
 
@@ -453,6 +459,7 @@ function minMax(toGet,d){
 }
 
 function UpdateSlider(rangeVals){
+    if(rangeVals[0]<1)rangeVals[0]=1;
     slider.noUiSlider.updateOptions({
         range:{
             'min':(rangeVals[0]-2),
@@ -463,7 +470,7 @@ function UpdateSlider(rangeVals){
     slider.noUiSlider.set([rangeVals[0]-1, rangeVals[0]-1]); 
     sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
     sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
-    
+    sliderText.innerHTML=Postfix();
 }
 
 function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
@@ -576,15 +583,34 @@ function bDistrict(d){
 }
 function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]+"<br/>"
-                        +'<div id="help">Click For Details<div>'
+                        +"Population<hideText>___di___</hideText>: <em>"+d.properties[pop]+" people</em>"+"<br/>"
+                        +"Life Expectancy<hideText>_L ii</hideText>: <em>"+d.properties[life]+" years"+"</em><br/>"
+                        +"Income Per Capita<hideText>_</hideText>: <em>$"+d.properties[inc]+"</em><br/>"
+                        +"Crime<hideText>___________</hideText>: <em>"+d.properties[crime]+"</em><br/>"
+                        +'<div id="help">*Crime Rate Per 1000 Residents<div>'
                         );
 }
 
 function HoverHighlight(d,select){
     d3.select(d).style("fill",function(d){
             return select_colors(d.properties[select])});
+}
+
+function Postfix(){
+    switch(select){
+        case tipDetail.population:
+            return 'People';
+            break;
+        case tipDetail.lifeExpectancy:
+            return 'Years';
+            break;
+        case tipDetail.income:
+            return 'US $';
+            break;
+        case tipDetail.crime:
+            return 'Per 1000 Residents';
+            break;
+        default:
+            return "";
+    }
 }
