@@ -88,7 +88,7 @@ d3.json("NYData.json", function(error, json) {
         .attr("d", path)
         .on("mouseover", function(d){
             //fit the tooltip to the information shown
-            tooltip.style("height","100px").style("width","175px");
+            tooltip.style("height","100px").style("width","225px");
             tooltip.transition()
             .duration(200)
             .style("opacity", .9);
@@ -178,7 +178,7 @@ d3.json("NYData.json", function(error, json) {
                         //put these under the population button
                       case tipDetail.population:  
                         tooltip.style("height", "175px").style("width", "180px");
-                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"%"+"<br/>"
+                        tooltip.html("<b><center>" + d.properties.boro_name + "</center></b><br/>" + "Total Population: "+d.properties.population+"<br/>"
                         +"Male Population: "+d.properties.male+"%"+"<br/>"
                         +"Female Population: "+d.properties.female+"%"+"<br/>"
                         +"Caucasian: "+d.properties.caucasian+"%"+"<br/>"
@@ -238,22 +238,14 @@ d3.json("NYData.json", function(error, json) {
                         "<center><b>"+d.properties[name]+" District "
                         + bDistrict(d)
                         +"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+" people"+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
-                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]+"<br/>"
+                        +"Population <hideText>___di__</hideText>: <em>"+d.properties[pop]+" people"+"</em><br/>"
+                        +"Life Expectancy<hideText> L ii</hideText>: <em>"+d.properties[life]+" years</em>"+"<br/>"
+                        +"Income Per Capita<hideText> </hideText>: <em>$"+d.properties[inc]+"</em><br/>"
+                        +"Crime<hideText>__________ </hideText>: <em>"+d.properties[crime]+"</em><br/>"
                         +'<div id="help">*Crime Rate Per 1000 Residents<div>'
         );
     }
     
-    function TooltipTextC(d,name,pop,life,inc,crime){
-    tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+" people"+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
-                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
-                        +"Crime Rate Per 1000 Residents: "+d.properties[crime]+"<br/>"
-                        );
-}
     //Gets the map coloring started @ Population
     select=tipDetail.population;
     select_colors=pop_colors;
@@ -308,7 +300,7 @@ d3.json("ChicagoData.json", function(error, json) {
         .style("opacity", .9);
         //change what's inside the tooltip
         if(!DetailedTooltip){
-            tooltip.style("height","100px").style("width","175px");
+            tooltip.style("height","100px").style("width","220px");
             TooltipTextC(d,"comName","population","lifeExpectancy","incomePerCapita","crimePerK");
         } else {
             switch(select){
@@ -585,10 +577,10 @@ function bDistrict(d){
 }
 function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+" people"+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
-                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
-                        +"Crime: "+d.properties[crime]+"<br/>"
+                        +"Population<hideText>___di___</hideText>: <em>"+d.properties[pop]+" people</em>"+"<br/>"
+                        +"Life Expectancy<hideText>_L ii</hideText>: <em>"+d.properties[life]+" years"+"</em><br/>"
+                        +"Income Per Capita<hideText>_</hideText>: <em>$"+d.properties[inc]+"</em><br/>"
+                        +"Crime<hideText>___________</hideText>: <em>"+d.properties[crime]+"</em><br/>"
                         +'<div id="help">*Crime Rate Per 1000 Residents<div>'
                         );
 }
