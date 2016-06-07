@@ -238,13 +238,22 @@ d3.json("NYData.json", function(error, json) {
                         "<center><b>"+d.properties[name]+" District "
                         + bDistrict(d)
                         +"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+"<br/>"
-                        +"Income per Capita: $"+d.properties[inc]+"<br/>"
+                        +"Population: "+d.properties[pop]+" people"+"<br/>"
+                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
+                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
-                        +'<div id="help">Click For Details<div>'
+                        +'<div id="help">*Crime Rate Per 1000 Residents<div>'
         );
     }
+    
+    function TooltipTextC(d,name,pop,life,inc,crime){
+    tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
+                        +"Population: "+d.properties[pop]+" people"+"<br/>"
+                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
+                        +"Income Per Capita: $"+d.properties[inc]+"<br/>"
+                        +"Crime Rate Per 1000 Residents: "+d.properties[crime]+"<br/>"
+                        );
+}
     //Gets the map coloring started @ Population
     select=tipDetail.population;
     select_colors=pop_colors;
@@ -576,11 +585,11 @@ function bDistrict(d){
 }
 function TooltipTextC(d,name,pop,life,inc,crime){
     tooltip.html("<center><b>"+d.properties[name]+"</b></center><br/>"
-                        +"Population: "+d.properties[pop]+"<br/>"
-                        +"Life Expectancy: "+d.properties[life]+"<br/>"
+                        +"Population: "+d.properties[pop]+" people"+"<br/>"
+                        +"Life Expectancy: "+d.properties[life]+" years"+"<br/>"
                         +"Income Per Capita: $"+d.properties[inc]+"<br/>"
                         +"Crime: "+d.properties[crime]+"<br/>"
-                        +'<div id="help">Click For Details<div>'
+                        +'<div id="help">*Crime Rate Per 1000 Residents<div>'
                         );
 }
 
