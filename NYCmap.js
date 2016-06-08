@@ -432,7 +432,7 @@ function Life() {
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
     ShowLegendPLIC(0,1,0,0);
-    UpdateSlider(lifeRange);
+    UpdateSlider([68,86]);
 }
 function Income() {
     select=tipDetail.income;
@@ -440,7 +440,7 @@ function Income() {
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
-    UpdateSlider(incomeRange);
+    UpdateSlider([8201,99858]);
 }
 function Crime() {
     select=tipDetail.crime;
@@ -448,7 +448,7 @@ function Crime() {
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
     ShowLegendPLIC(0,0,0,1);
-    UpdateSlider(crimeRange);
+    UpdateSlider([0,99]);
 }
 
 /*-----Helper Functions------*/
@@ -545,6 +545,36 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .style("font-family", "sans-serif")
         .style("font-size", 10)
         .text(function(d, i) { return (textArray[i]);});
+    //Legend Text
+    parentSVG.select("g."+cssClass)
+        .append("text")
+        .attr("class", cssClass)
+        .attr("id","legendText")
+        .attr("x", 585)
+        .attr("y", height-90)
+        .attr("width", 200)
+        .attr("height", 15)
+        .attr("align","center")
+        .style("opacity",opacity)
+        .style("fill", "black")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 12)
+        .text(function(){
+            switch(cssClass){
+                case "poplegend":
+                    return "People";
+                    break;
+                case "lifelegend":
+                    return "In Years";
+                    break;
+                case "incomelegend":
+                    return "US ($)";
+                case "crimelegend":
+                    return "Per 1000 Residents";
+                    break;
+            }
+        })
 }
 
 function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
