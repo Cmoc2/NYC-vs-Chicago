@@ -387,6 +387,11 @@ document.write('<div align="center" id="slider-left-value"></div><div id="slider
 var slider = document.getElementById('slider');
 var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
 var sliderText = document.getElementById('slider-text');
+var format = wNumb({
+        decimals: 0,
+        thousand:',',
+        postfix: Postfix()
+})
 noUiSlider.create(slider, {
     start: [0,0],
     tooltips:[false,false],
@@ -396,11 +401,7 @@ noUiSlider.create(slider, {
 	'min': 0,
 	'max': 42
     },
-    format: wNumb({
-        decimals: 0,
-        thousand:',',
-        postfix: Postfix()
-    })
+    format: format
 });
 
 sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
@@ -474,6 +475,8 @@ function UpdateSlider(rangeVals){
 }
 
 function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
+    setVals[0]=format.from(setVals[0]);
+    setVals[1]=format.from(setVals[1]);
      NYmap.selectAll("path")
     .data(NYdata.features)
     .transition().duration(1000)
