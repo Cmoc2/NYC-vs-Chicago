@@ -22,7 +22,7 @@ var crime = colorbrewer.Reds[8];
 var popText = ["0-40K", "40K-80K", "80K-120K", "120K-160K","160K-200K","200K+"];
 var lifeText = ["0-60", "60-70", "70-80", "80-90", "90-100"];
 var incomeText = ["$0-$5000", "$5000-15k", "$15k-$40k", "$40k-$80k", "$80k-$100k"];
-var crimeText = [0, 10, 20, 30, 40, 50, 60];
+var crimeText = ["0-10", "10-20", "20-30", "30-40", "40-50", "50-60", "60+"];
 
 //Detailed Tooltip Selections
 var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",income:"incomePerCapita",crime:"crimePerK"},select;
