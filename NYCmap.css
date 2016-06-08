@@ -6,6 +6,11 @@ em{
     font-style: normal;
     float:right;
 }
+#subinfo{
+    padding:0px;
+    margin:10px;
+    width: 800px;
+}
 
 .Cfeatures{
     fill: #B3DDF2;
