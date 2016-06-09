@@ -22,7 +22,14 @@ var crime = colorbrewer.Reds[8];
 var popText = ["0-40K", "40K-80K", "80K-120K", "120K-160K","160K-200K","200K+"];
 var lifeText = ["0-60", "60-70", "70-80", "80-90", "90-100"];
 var incomeText = ["$0-$5000", "$5000-15k", "$15k-$40k", "$40k-$80k", "$80k-$100k"];
-var crimeText = [0, 10, 20, 30, 40, 50, 60];
+var crimeText = ["0-10", "10-20", "20-30", "30-40", "40-50", "50-60", "60+"];
+var cssLegend,
+    legendRange = {
+        poplegend: [[0,40000],[40000,80000],[80000,120000],[120000,160000],[160000,200000],[200000,250000]],
+        lifelegend:[[0,60],[60,70],[70,80],[80,90],[90,100]],
+        incomelegend:[[0,5000],[5000,15000],[15000,40000],[40000,80000],[80000,100000]],
+        crimelegend:[[0,10],[10,20],[20,30],[30,40],[40,50],[50,60],[60,120]]
+}
 
 //Detailed Tooltip Selections
 var tipDetail = {population:"population", lifeExpectancy:"lifeExpectancy",income:"incomePerCapita",crime:"crimePerK"},select;
@@ -34,7 +41,11 @@ var parentSVG= d3.select("body")
     .attr("id","parentSVG")
     .attr("align","center")
     .attr("width", width*2)
-    .attr("height", height);
+    .attr("height", height)
+    .on("click", function(){
+        ColorScheme(NYdatum,svg,select_colors,select);
+        ColorScheme(Cdatum,svg2,select_colors,select);
+    });
 //an SVG for New York
 var svg = d3.select("#parentSVG")
     .append("svg")
@@ -153,7 +164,7 @@ d3.json("NYData.json", function(error, json) {
             //tooltip is initially hidden, activates when mouse first goes over map.
             return tooltip.style("display","inline");
         })
-        .on("click", function(d){
+        /*.on("click", function(d){
             if(bDistrict(d)=="bearsNstuff");else{
                 DetailedTooltip=!DetailedTooltip; //toggle.
                 if(!DetailedTooltip) {
@@ -213,7 +224,7 @@ d3.json("NYData.json", function(error, json) {
                   }
                 }
             }
-        })
+        })*/
         .on("mousemove", function(d){
             return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
         })
@@ -247,6 +258,7 @@ d3.json("NYData.json", function(error, json) {
     }
     
     //Gets the map coloring started @ Population
+    cssLegend = "poplegend";
     select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");  
@@ -325,7 +337,7 @@ d3.json("ChicagoData.json", function(error, json) {
         //tooltip activates the moment the mouse first goes over the map.
         return tooltip.style("display","inline");
     })
-    .on("click", function(d){
+    /*.on("click", function(d){
         console.log(d);
         DetailedTooltip=!DetailedTooltip; //toggle.
         if(!DetailedTooltip) {
@@ -351,7 +363,7 @@ d3.json("ChicagoData.json", function(error, json) {
                     break;
             }
         }
-    })
+    })*/
     .on("mousemove", function(d){
         //update tooltip position
         return tooltip.style("top", (event.pageY-10)+"px").style("left",(event.pageX+10)+"px");
@@ -387,6 +399,11 @@ document.write('<div align="center" id="slider-left-value"></div><div id="slider
 var slider = document.getElementById('slider');
 var sliderValues = [document.getElementById('slider-left-value'),document.getElementById('slider-right-value')]
 var sliderText = document.getElementById('slider-text');
+var format = wNumb({
+        decimals: 0,
+        thousand:',',
+        postfix: Postfix()
+})
 noUiSlider.create(slider, {
     start: [0,0],
     tooltips:[false,false],
@@ -396,18 +413,14 @@ noUiSlider.create(slider, {
 	'min': 0,
 	'max': 42
     },
-    format: wNumb({
-        decimals: 0,
-        thousand:',',
-        postfix: Postfix()
-    })
+    format: format
 });
 
 sliderValues[0].innerHTML=slider.noUiSlider.get()[0];
 sliderValues[1].innerHTML=slider.noUiSlider.get()[1];
 slider.noUiSlider.on('slide', function(values,handle){
     sliderValues[handle].innerHTML=values[handle] +" ";
-    Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get());
+    Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,slider.noUiSlider.get(),true);
 });
 
 //Gets the legend started. Hidden
@@ -418,6 +431,7 @@ AppendLegend(crime_colors,crime,crimeText,"crimelegend",0);
 
 //button functions
 function Population() {
+    cssLegend = "poplegend"
     select=tipDetail.population;
     select_colors=pop_colors;
     ColorScheme(NYdatum,svg,pop_colors,"population");
@@ -426,28 +440,31 @@ function Population() {
     UpdateSlider([2500,250000]);
 }
 function Life() {
+    cssLegend = "lifelegend";
     select=tipDetail.lifeExpectancy;
     select_colors=life_colors;
     ColorScheme(NYdatum,svg,life_colors,"lifeExpectancy");
     ColorScheme(Cdatum,svg2,life_colors,"lifeExpectancy");
     ShowLegendPLIC(0,1,0,0);
-    UpdateSlider(lifeRange);
+    UpdateSlider([68,86]);
 }
 function Income() {
+    cssLegend = "incomelegend";
     select=tipDetail.income;
     select_colors=income_colors;
     ColorScheme(NYdatum,svg,income_colors,"incomePerCapita");
     ColorScheme(Cdatum,svg2,income_colors,"incomePerCapita"); 
     ShowLegendPLIC(0,0,1,0);
-    UpdateSlider(incomeRange);
+    UpdateSlider([8201,99858]);
 }
 function Crime() {
+    cssLegend = "crimelegend";
     select=tipDetail.crime;
     select_colors=crime_colors;
     ColorScheme(NYdatum,svg,crime_colors,"crimePerK");
     ColorScheme(Cdatum,svg2,crime_colors,"crimePerK");
     ShowLegendPLIC(0,0,0,1);
-    UpdateSlider(crimeRange);
+    UpdateSlider([0,99]);
 }
 
 /*-----Helper Functions------*/
@@ -473,7 +490,12 @@ function UpdateSlider(rangeVals){
     sliderText.innerHTML=Postfix();
 }
 
-function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals){
+function Highlight(NYdata,CData,NYmap,Cmap,color,property,setVals,bool){
+    if(bool){
+    setVals[0]=format.from(setVals[0]);
+    setVals[1]=format.from(setVals[1]);
+    } else;
+    console.log(setVals);
      NYmap.selectAll("path")
     .data(NYdata.features)
     .transition().duration(1000)
@@ -527,7 +549,10 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .attr("fill", function(d, i){ return brewSet[i];})
         .style("stroke", "rgba(105, 105, 105, 0.86)")
         .style("stroke-width", "2px")
-        .style("opacity",1);
+        .style("opacity",1)
+        .on("mouseover",function(d,i){
+        Highlight(NYdatum,Cdatum,svg,svg2,select_colors,select,legendRange[cssLegend][i],false)
+        });
     //further appending will append it inside rect. Starting again appending to g.
     parentSVG.selectAll("g."+cssClass)
         .append("text")
@@ -542,6 +567,36 @@ function AppendLegend(cScale, brewSet, textArray,cssClass,opacity){
         .style("font-family", "sans-serif")
         .style("font-size", 10)
         .text(function(d, i) { return (textArray[i]);});
+    //Legend Text
+    parentSVG.select("g."+cssClass)
+        .append("text")
+        .attr("class", cssClass)
+        .attr("id","legendText")
+        .attr("x", 585)
+        .attr("y", height-90)
+        .attr("width", 200)
+        .attr("height", 15)
+        .attr("align","center")
+        .style("opacity",opacity)
+        .style("fill", "black")
+        .style("font-weight", "bold")
+        .style("font-family", "sans-serif")
+        .style("font-size", 12)
+        .text(function(){
+            switch(cssClass){
+                case "poplegend":
+                    return "People";
+                    break;
+                case "lifelegend":
+                    return "In Years";
+                    break;
+                case "incomelegend":
+                    return "US ($)";
+                case "crimelegend":
+                    return "Per 1000 Residents";
+                    break;
+            }
+        })
 }
 
 function ShowLegendPLIC(popOpac,lifeOpac,incomeOpac,crimeOpac){
@@ -589,11 +644,6 @@ function TooltipTextC(d,name,pop,life,inc,crime){
                         +"Crime<hideText>___________</hideText>: <em>"+d.properties[crime]+"</em><br/>"
                         +'<div id="help">*Crime Rate Per 1000 Residents<div>'
                         );
-}
-
-function HoverHighlight(d,select){
-    d3.select(d).style("fill",function(d){
-            return select_colors(d.properties[select])});
 }
 
 function Postfix(){
